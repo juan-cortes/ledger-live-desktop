@@ -15,7 +15,8 @@ import ProgressCircle from 'components/ProgressCircle'
 import TranslatedError from 'components/TranslatedError'
 import ExclamationCircleThin from 'icons/ExclamationCircleThin'
 
-import { Modal, ModalContent, ModalBody, ModalTitle, ModalFooter } from './index'
+import Modal from './index'
+import ModalBody from './ModalBody'
 
 const Container = styled(Box).attrs({
   alignItems: 'center',
@@ -37,18 +38,18 @@ const Separator = styled(Box).attrs({
 `
 
 const DisclaimerStep = ({ desc }: { desc?: string }) => (
-  <ModalContent>
+  <Box>
     {desc ? (
       <Box ff="Open Sans" color="smoke" fontSize={4} textAlign="center" mb={2}>
         {desc}
       </Box>
     ) : null}
-  </ModalContent>
+  </Box>
 )
 
 const FlashStep = ({ progress, t }: { progress: number, t: * }) =>
   progress === 0 ? (
-    <ModalContent>
+    <Box>
       <Box mx={7}>
         <Text ff="Open Sans|Regular" align="center" color="smoke">
           <Bullet>{'1.'}</Bullet>
@@ -72,9 +73,9 @@ const FlashStep = ({ progress, t }: { progress: number, t: * }) =>
           alt={t('manager.modal.mcuFirst')}
         />
       </Box>
-    </ModalContent>
+    </Box>
   ) : (
-    <ModalContent>
+    <Box>
       <Box mx={7} align="center">
         <ProgressCircle size={64} progress={progress} />
       </Box>
@@ -86,11 +87,11 @@ const FlashStep = ({ progress, t }: { progress: number, t: * }) =>
           {t('manager.modal.mcuPin')}
         </Text>
       </Box>
-    </ModalContent>
+    </Box>
   )
 
 const ErrorStep = ({ error }: { error: Error }) => (
-  <ModalContent>
+  <Box>
     <Container>
       <Box color="alertRed">
         <ExclamationCircleThin size={44} />
@@ -116,7 +117,7 @@ const ErrorStep = ({ error }: { error: Error }) => (
         <TranslatedError error={error} field="description" />
       </Box>
     </Container>
-  </ModalContent>
+  </Box>
 )
 
 type Props = {
@@ -163,22 +164,28 @@ class RepairModal extends PureComponent<Props> {
     return (
       <Modal
         isOpened={isOpened}
+        centered
         preventBackdropClick={isLoading}
+        onClose={!cancellable && isLoading ? undefined : onReject}
         {...props}
-        render={({ onClose }) => (
-          <ModalBody onClose={!cancellable && isLoading ? undefined : onClose}>
-            <TrackPage category="Modal" name={analyticsName} />
-            <ModalTitle>{title}</ModalTitle>
-            {error ? (
-              <ErrorStep error={error} />
-            ) : isLoading ? (
-              <FlashStep t={t} progress={progress} />
-            ) : (
-              <DisclaimerStep desc={desc} />
-            )}
-
-            {!isLoading ? (
-              <ModalFooter horizontal align="center" justify="flex-end" flow={2}>
+      >
+        <TrackPage category="Modal" name={analyticsName} />
+        <ModalBody
+          title={title}
+          render={() => (
+            <Box>
+              {error ? (
+                <ErrorStep error={error} />
+              ) : isLoading ? (
+                <FlashStep t={t} progress={progress} />
+              ) : (
+                <DisclaimerStep desc={desc} />
+              )}
+            </Box>
+          )}
+          renderFooter={() =>
+            !isLoading ? (
+              <Box horizontal align="center" justify="flex-end" flow={2}>
                 <Button onClick={onReject}>{t(`common.${error ? 'close' : 'cancel'}`)}</Button>
                 {error ? null : (
                   <Button
@@ -191,11 +198,11 @@ class RepairModal extends PureComponent<Props> {
                     {realConfirmText}
                   </Button>
                 )}
-              </ModalFooter>
-            ) : null}
-          </ModalBody>
-        )}
-      />
+              </Box>
+            ) : null
+          }
+        />
+      </Modal>
     )
   }
 }
