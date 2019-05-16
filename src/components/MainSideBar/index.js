@@ -11,7 +11,7 @@ import type { T } from 'types/common'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
-import { MODAL_RECEIVE, MODAL_SEND } from 'config/constants'
+import { MODAL_RECEIVE, MODAL_SEND, MODAL_QR_HACKATHON } from 'config/constants'
 import { accountsSelector } from 'reducers/accounts'
 import { openModal } from 'reducers/modals'
 import { developerModeSelector } from 'reducers/settings'
@@ -27,6 +27,7 @@ import IconPieChart from 'icons/PieChart'
 import IconReceive from 'icons/Receive'
 import IconSend from 'icons/Send'
 import IconExchange from 'icons/Exchange'
+import IconQR from 'icons/QR'
 import TopGradient from './TopGradient'
 import KeyboardContent from '../KeyboardContent'
 import useExperimental from '../../hooks/useExperimental'
@@ -133,6 +134,11 @@ class MainSideBar extends PureComponent<Props> {
     this.push('/')
     this.props.openModal(MODAL_RECEIVE)
   }
+
+  handleOpenQRModal = () => {
+    this.props.openModal(MODAL_QR_HACKATHON)
+  }
+
   handleClickManager = () => this.push('/manager')
   handleClickAccounts = () => this.push('/accounts')
   handleClickExchange = () => this.push('/partners')
@@ -192,6 +198,12 @@ class MainSideBar extends PureComponent<Props> {
               iconActiveColor="wallet"
               onClick={this.handleClickExchange}
               isActive={pathname === '/partners'}
+            />
+            <SideBarListItem
+              label="QRCode"
+              icon={IconQR}
+              iconActiveColor="wallet"
+              onClick={this.handleOpenQRModal}
             />
             {developerMode && (
               <KeyboardContent sequence="DEVTOOLS">
