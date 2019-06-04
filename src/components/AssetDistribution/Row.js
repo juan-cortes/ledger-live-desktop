@@ -86,9 +86,9 @@ class Row extends PureComponent<Props, State> {
       <Wrapper>
         <Asset>
           {icon}
-          <Text ff="Open Sans|SemiBold" color="dark" fontSize={3}>
+          <Ellipsis ff="Open Sans|SemiBold" color="dark" fontSize={3} pr={2}>
             {currency.name}
-          </Text>
+          </Ellipsis>
         </Asset>
         <Price>
           <IconActivity size={12} color={colors.graphite} />
