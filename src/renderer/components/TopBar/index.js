@@ -27,6 +27,7 @@ import IconSettings from "~/renderer/icons/Settings";
 // TODO: ActivityIndicator
 import ActivityIndicator from "./ActivityIndicator";
 import ItemContainer from "./ItemContainer";
+import Device from "./Device";
 import { setDiscreetMode } from "~/renderer/actions/settings";
 import { hasPasswordSelector } from "~/renderer/reducers/application";
 
@@ -98,6 +99,7 @@ const TopBar = () => {
         <Box grow horizontal justifyContent="space-between">
           <Breadcrumb />
           <Box horizontal>
+            <Device />
             {hasAccounts && (
               <>
                 <ActivityIndicator />

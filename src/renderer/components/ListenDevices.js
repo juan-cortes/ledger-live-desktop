@@ -21,7 +21,9 @@ const ListenDevices = () => {
 
             if (type === "add") {
               devices[device.path] = true;
-              dispatch(addDevice(stateDevice));
+              command("getAppAndVersion")(device).subscribe(appAndVersion => {
+                dispatch(addDevice({ ...stateDevice, appAndVersion }));
+              });
             } else if (type === "remove") {
               delete device[device.path];
               dispatch(removeDevice(stateDevice));

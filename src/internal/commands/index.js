@@ -13,6 +13,7 @@ import ping from "./ping";
 import connectApp from "./connectApp";
 import connectManager from "./connectManager";
 import testApdu from "./testApdu";
+import getAppAndVersion from "./getAppAndVersion";
 import testCrash from "./testCrash";
 import testInterval from "./testInterval";
 import appOpExec from "./appOpExec";
@@ -26,6 +27,7 @@ export const commandsById = {
   firmwareRepair,
   flushDevice,
   getDeviceInfo,
+  getAppAndVersion,
   getLatestFirmwareForDevice,
   libcoreGetVersion,
   libcoreReset,

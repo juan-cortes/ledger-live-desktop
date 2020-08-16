@@ -7,6 +7,7 @@ import type { DeviceModelId } from "@ledgerhq/devices";
 export type Device = {
   path: string,
   modelId: DeviceModelId,
+  appAndVersion?: { name: string, version: string, flags: number },
 };
 
 export type DevicesState = {
