@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import InfoCircle from "../icons/InfoCircle";
 import IconShield from "../icons/Shield";
+import IconLightBulb from "../icons/LightBulb";
 import type { ThemedComponent } from "../styles/StyleProvider";
 import Box from "./Box";
 import Text from "./Text";
@@ -20,6 +21,7 @@ type Props = {
 
 const getTypeColor = p => {
   switch (p.type) {
+    case "hint":
     case "primary":
       return {
         backgroundColor: p.theme.colors.palette.action.hover,
@@ -54,19 +56,22 @@ export default function InfoBox({
   learnMoreLabel,
   horizontal = true,
   type = "primary",
+  mt,
 }: Props) {
   const { t } = useTranslation();
   const label = learnMoreLabel || t("common.learnMore");
   return (
-    <Container type={type}>
+    <Container type={type} mt={mt}>
       {type === "security" ? (
         <IconShield color={colors.alertRed} height={32} width={28} />
+      ) : type === "hint" ? (
+        <IconLightBulb />
       ) : (
         <InfoCircle size={16} />
       )}
       <Box flex="1" ml={16} horizontal={horizontal} alignItems="center">
         <Box flex="1" style={{ wordBreak: "break-all" }}>
-          <Text ff="Inter|Regular" fontSize={3} style={{ wordBreak: "break-word" }}>
+          <Text ff="Inter|Medium" fontSize={3} style={{ wordBreak: "break-word" }}>
             {description}
             {onLearnMore && (
               <Text fontSize={3} ml={1} ff="Inter|SemiBold">
