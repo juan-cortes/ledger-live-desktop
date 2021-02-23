@@ -168,20 +168,17 @@ const OpenManagerBtn = ({
   mt?: number,
 }) => {
   const history = useHistory();
-  const { state, send } = useContext(ProductTourContext);
+  const { send } = useContext(ProductTourContext);
   const onClick = useCallback(() => {
     setTrackingSource("device action open manager button");
-    if (state.matches("flow")) {
-      // NB Consider the product tour flow as exited if we navigate away
-      send("EXIT");
-    }
+    send("EXIT");
 
     history.push({
       pathname: "manager",
       search: appName ? `?q=${appName}` : "",
     });
     closeAllModal();
-  }, [state, history, appName, closeAllModal, send]);
+  }, [history, appName, closeAllModal, send]);
 
   return (
     <Button mt={mt} primary onClick={onClick}>
