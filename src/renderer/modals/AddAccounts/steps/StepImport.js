@@ -1,6 +1,6 @@
 // @flow
 
-import React, { useEffect, PureComponent } from "react";
+import React, { useCallback, useContext, useEffect, PureComponent } from "react";
 import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
@@ -25,6 +25,9 @@ import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import QueueOverlay from "~/renderer/components/ProductTour/QueueOverlay";
+import { useActiveFlow } from "~/renderer/components/ProductTour/hooks";
+import ProductTourContext from "~/renderer/components/ProductTour/ProductTourContext";
+import { useHistory } from "react-router-dom";
 import type { StepProps } from "..";
 
 // $FlowFixMe
@@ -251,7 +254,7 @@ class StepImport extends PureComponent<StepProps> {
               {
                 selector: ".account-row",
                 i18nKey: "productTour.flows.createAccount.overlays.account",
-                config: { bottom: true, left: true, isDismissable: true },
+                config: { bottom: true, left: true, isDismissable: true, padding: 10 },
               },
             ]}
             condition={scannedAccounts.length}
@@ -307,6 +310,9 @@ export const StepImportFooter = ({
   t,
 }: StepProps) => {
   const dispatch = useDispatch();
+  const { send } = useContext(ProductTourContext);
+  const history = useHistory();
+  const activeFlow = useActiveFlow();
   const willCreateAccount = checkedAccountsIds.some(id => {
     const account = scannedAccounts.find(a => a.id === id);
     return account && isAccountEmpty(account);
@@ -328,8 +334,17 @@ export const StepImportFooter = ({
       ? t("common.close")
       : t("addAccounts.cta.add", { count });
 
+  const wrappedOnCloseModal = useCallback(() => {
+    // NB if we are inside the product tour flow, exit it and redirect the user to the portfolio screen
+    if (activeFlow === "createAccount") {
+      history.push("/");
+      send("EXIT");
+    }
+    onCloseModal();
+  }, [activeFlow, history, onCloseModal, send]);
+
   const onClick = willClose
-    ? onCloseModal
+    ? wrappedOnCloseModal
     : async () => {
         await onClickAdd();
         transitionTo("finish");
