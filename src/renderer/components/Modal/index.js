@@ -47,7 +47,8 @@ const transitionsOpacity = {
   exited: { opacity: 0 },
 };
 
-const transitionsScale = { // FIXME, we just lost the scale animation for product tour
+const transitionsScale = {
+  // FIXME, we just lost the scale animation for product tour
   entering: { transform: "scale(1)" },
   entered: { transform: "scale(1)" },
   exiting: { transform: "scale(1)" },
