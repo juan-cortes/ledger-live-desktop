@@ -1,11 +1,12 @@
 // @flow
-import React, { useMemo } from "react";
-import { useTransition, animated } from "react-spring";
+import React, { useMemo, useState, useEffect } from "react";
+import { useSpring, useTransition, animated } from "react-spring";
 import styled from "styled-components";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import AccountCard from "../AccountGridItem";
 import AccountCardPlaceholder from "../AccountGridItem/Placeholder";
+import Text from "~/renderer/components/Text";
 import useMeasure from "./useMeasure";
 import useMedia from "./useMedia";
 import { useSelector } from "react-redux";
@@ -33,7 +34,7 @@ export default function GridBody({
   ...rest
 }: Props) {
   const columns = useMedia(
-    ["(min-width: 1800px)", "(min-width: 1500px)", "(min-width: 1200px)", "(min-width: 900px)"],
+    ["(min-width: 1800px)", "(min-width: 1500px)", "(min-width: 1200px)", "(min-width: 1000px)"],
     [5, 4, 3, 2],
     2,
   );
@@ -41,8 +42,12 @@ export default function GridBody({
   const amnesiaCookies = useSelector(amnesiaCookiesSelector);
   const rawDevice = useSelector(getCurrentDevice);
   const device = useDebounce(rawDevice, 3000);
-  const items = useMemo(
-    () =>
+  const [items, setItems] = useState([]);
+  const [totalConnectedAccounts, setTotalConnectAccounts] = useState(0);
+
+  useEffect(() => {
+    let totalConnectedAccounts = 0;
+    setItems(
       [...visibleAccounts, ...hiddenAccounts]
         .filter(Boolean)
         .sort((a, b) => {
@@ -52,26 +57,38 @@ export default function GridBody({
           return 0;
         })
         .map(account => {
+          const cookie = device?.cookie && account.cookie === device.cookie;
+          totalConnectedAccounts += !!cookie;
+
           return {
             account,
-            cookie: device?.cookie && account.cookie === device.cookie,
+            cookie,
             height: 250,
             amnesia: amnesiaCookies.includes(account?.cookie),
             css: account.id,
           };
         }),
-    [visibleAccounts, hiddenAccounts, device, amnesiaCookies],
-  );
+    );
+    setTotalConnectAccounts(totalConnectedAccounts);
+  }, [visibleAccounts, hiddenAccounts, device, amnesiaCookies]);
 
   const [heights, gridItems] = useMemo(() => {
     const heights = new Array(columns).fill(0); // Each column gets a height starting with zero
     const gridItems = items.map((child, i) => {
+      if (totalConnectedAccounts && i === totalConnectedAccounts) {
+        // Skip the next items, to go to next row, you know?
+        for (let e = 1; e < heights.length; e++) heights[e] = heights[0];
+      }
       const column = heights.indexOf(Math.min(...heights)); // Basic masonry-grid placing, puts tile into the smallest column using Math.min
-      const xy = [(width / columns) * column, (heights[column] += child.height) - child.height]; // X = container width / number of columns * column index, Y = it's just the height of the current column
+      const offsetY = totalConnectedAccounts ? 0 : 0; // hack for the title space
+      const xy = [
+        (width / columns) * column,
+        (heights[column] += child.height) - child.height + offsetY,
+      ]; // X = container width / number of columns * column index, Y = it's just the height of the current column
       return { ...child, xy, width: 300, height: child.height };
     });
     return [heights, gridItems];
-  }, [columns, items, width]);
+  }, [columns, items, totalConnectedAccounts, width]);
 
   const transitions = useTransition(gridItems, i => i.css, {
     from: ({ xy, height, width }) => ({ xy, height, width, opacity: 0 }),
@@ -82,8 +99,26 @@ export default function GridBody({
     trail: 25,
   });
 
+  const containerThingy = useSpring({
+    to: {
+      opacity: 1,
+      width: "100%",
+      height: Math.ceil(totalConnectedAccounts / columns) * 250,
+    },
+    from: {
+      opacity: 0,
+      width: "100%",
+      height: Math.ceil(totalConnectedAccounts / columns) * 250,
+    },
+    reverse: !totalConnectedAccounts,
+  });
+
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
+      <animated.div style={containerThingy}>
+        <Backdrop>
+        </Backdrop>
+      </animated.div>
       {transitions.map(({ item, props: { xy, ...rest }, key }) => (
         <animated.div
           key={key}
@@ -126,4 +161,15 @@ const List = styled.div`
     height: 100%;
     overflow: hidden;
   }
+`;
+
+const Backdrop = styled.div`
+  position: absolute;
+  background: ${p => p.theme.colors.palette.divider};
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  font-size: 20px;
+  padding-left:10px;
+  padding-top:10px;
 `;

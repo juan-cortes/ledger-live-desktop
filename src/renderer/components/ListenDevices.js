@@ -45,7 +45,7 @@ const ListenDevices = () => {
                 deviceId: device?.deviceId || "",
               }).subscribe(({ responseHex }) => {
                 // if the device is inside an app it returns a 6804 error, which is a bummer
-                if (!["6985", "6a15", "6804"].includes(responseHex)) {
+                if (!["6985", "6a15", "6804", "6e00"].includes(responseHex)) {
                   dispatch(addDevice({ ...stateDevice, cookie: responseHex }));
                 } else {
                   console.log(
