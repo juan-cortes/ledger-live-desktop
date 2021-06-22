@@ -27,19 +27,26 @@ import Header from "./Header";
 import Star from "~/renderer/components/Stars/Star";
 import { hideEmptyTokenAccountsSelector } from "~/renderer/reducers/settings";
 import Button from "~/renderer/components/Button";
-
+import { rgba, mix } from "~/renderer/styles/helpers";
 import perFamilyTokenList from "~/renderer/generated/TokenList";
 
 const Row: ThemedComponent<{}> = styled(Box)`
   background: ${p => p.theme.colors.palette.background.paper};
   border-radius: 4px;
-  border: 1px solid ${p => (p.cookie ? p.theme.colors.wallet : "transparent")};
+  border: 1px solid
+    ${p =>
+      p.amnesia
+        ? p.theme.colors.palette.text.shade100
+        : p.cookie
+        ? p.theme.colors.wallet
+        : "transparent"};
   box-shadow: 0 4px 8px 0 #00000007;
   color: #abadb6;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   flex: 1;
+  height: 68px;
   font-weight: 600;
   justify-content: flex-start;
   margin-bottom: 9px;
@@ -47,7 +54,18 @@ const Row: ThemedComponent<{}> = styled(Box)`
   position: relative;
   transition: background-color ease-in-out 200ms;
   :hover {
-    border-color: ${p => p.theme.colors.palette.text.shade20};
+    border-color: ${p =>
+      p.amnesia
+        ? p.theme.colors.palette.text.shade100
+        : p.cookie
+        ? p.theme.colors.wallet
+        : p.theme.colors.palette.text.shade20};
+    ${p =>
+      p.amnesia
+        ? `box-shadow: 0px 0px 0px 4px ${rgba(p.theme.colors.palette.text.shade100, 0.3)};`
+        : p.cookie
+        ? "box-shadow: 0px 0px 0px 4px rgba(100, 144, 241, 0.3);"
+        : ""}
   }
   :active {
     border-color: ${p => p.theme.colors.palette.text.shade20};
@@ -195,7 +213,8 @@ class AccountRowItem extends PureComponent<Props, State> {
       disableRounding,
       search,
       hideEmptyTokens,
-      device,
+      amnesia,
+      cookie,
     } = this.props;
     const { expanded } = this.state;
 
@@ -253,10 +272,11 @@ class AccountRowItem extends PureComponent<Props, State> {
       >
         <span style={{ position: "absolute", top: -70 }} ref={this.scrollTopFocusRef} />
         <Row
-          cookie={device?.cookie === account.cookie}
           expanded={expanded}
           tokens={showTokensIndicator}
           key={mainAccount.id}
+          amnesia={amnesia}
+          cookie={cookie}
         >
           <AccountContextMenu account={account}>
             <RowContent
