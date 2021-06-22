@@ -109,6 +109,7 @@ export type SettingsState = {
   showClearCacheBanner: boolean,
   fullNodeEnabled: boolean,
   amnesiaCookies: string[],
+  cookieSeedNames: { [string]: string },
 };
 
 const defaultsForCurrency: Currency => CurrencySettings = crypto => {
@@ -155,6 +156,7 @@ const INITIAL_STATE: SettingsState = {
   showClearCacheBanner: false,
   fullNodeEnabled: false,
   amnesiaCookies: [],
+  cookieSeedNames: {},
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -261,6 +263,25 @@ const handlers: Object = {
   }),
   // used to debug performance of redux updates
   DEBUG_TICK: state => ({ ...state }),
+
+  SET_COOKIE_SEED_NAME: (state: SettingsState, { payload: { cookieSeed, name } }) => {
+    return {
+      ...state,
+      cookieSeedNames: { ...state.cookieSeedNames, [cookieSeed]: name },
+    };
+  },
+  TOGGLE_AMNESIA_FOR_COOKIE_SEED: (state: SettingsState, { payload: { cookieSeed } }) => {
+    let amnesiaCookies = [...state.amnesiaCookies];
+    if (amnesiaCookies.includes(cookieSeed)) {
+      amnesiaCookies = amnesiaCookies.filter(s => s !== cookieSeed);
+    } else {
+      amnesiaCookies.push(cookieSeed);
+    }
+    return {
+      ...state,
+      amnesiaCookies,
+    };
+  },
 };
 
 // TODO refactor selectors to *Selector naming convention
@@ -377,6 +398,8 @@ export const hasInstalledAppsSelector = (state: State) => state.settings.hasInst
 export const carouselVisibilitySelector = (state: State) => state.settings.carouselVisibility;
 export const hasAcceptedSwapKYCSelector = (state: State) => state.settings.hasAcceptedSwapKYC;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
+export const cookieSeedNamesSelector = (state: State) => state.settings.cookieSeedNames;
+
 export const swapAcceptedProviderIdsSelector = (state: State) =>
   state.settings.swapAcceptedProviderIds;
 export const hasCompletedOnboardingSelector = (state: State) =>

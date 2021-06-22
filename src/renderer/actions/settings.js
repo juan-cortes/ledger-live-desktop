@@ -141,6 +141,16 @@ export const dismissBanner = (bannerKey: string) => ({
   payload: bannerKey,
 });
 
+export const setNameForCookieSeed = payload => ({
+  type: "SET_COOKIE_SEED_NAME",
+  payload,
+});
+
+export const toggleAmnesiaForCookieSeed = payload => ({
+  type: "TOGGLE_AMNESIA_FOR_COOKIE_SEED",
+  payload,
+});
+
 export const setPreferredDeviceModel = (preferredDeviceModel: DeviceModelId) =>
   saveSettings({ preferredDeviceModel });
 

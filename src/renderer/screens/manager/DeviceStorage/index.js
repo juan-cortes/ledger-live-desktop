@@ -1,12 +1,13 @@
 // @flow
 
-import React, { memo } from "react";
+import React, { useCallback, memo, useState, useEffect } from "react";
 import styled, { css, keyframes } from "styled-components";
+import useTheme from "~/renderer/hooks/useTheme";
 import { Trans } from "react-i18next";
 import { Transition, TransitionGroup } from "react-transition-group";
-
+import { fontSize, color } from "styled-system";
+import fontFamily from "~/renderer/styles/styled/fontFamily";
 import manager from "@ledgerhq/live-common/lib/manager";
-
 import type { DeviceInfo, FirmwareUpdateContext } from "@ledgerhq/live-common/lib/types/manager";
 import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import type { AppsDistribution } from "@ledgerhq/live-common/lib/apps";
@@ -17,8 +18,9 @@ import ByteSize from "~/renderer/components/ByteSize";
 import { rgba } from "~/renderer/styles/helpers";
 import Text from "~/renderer/components/Text";
 import Tooltip from "~/renderer/components/Tooltip";
+import Button from "~/renderer/components/Button";
 import Card from "~/renderer/components/Box/Card";
-import Box from "~/renderer/components/Box";
+import Box, { Tabbable } from "~/renderer/components/Box";
 
 import IconTriangleWarning from "~/renderer/icons/TriangleWarning";
 import IconCheckFull from "~/renderer/icons/CheckFull";
@@ -26,6 +28,15 @@ import IconCheckFull from "~/renderer/icons/CheckFull";
 import nanoS from "./images/nanoS.png";
 import nanoX from "./images/nanoX.png";
 import blue from "./images/blue.png";
+import IconPen from "~/renderer/icons/Pen";
+import IconAmnesia from "~/renderer/icons/Amnesia";
+import IconCross from "~/renderer/icons/Cross";
+import IconCheck from "~/renderer/icons/Check";
+
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { cookieSeedNamesSelector, amnesiaCookiesSelector } from "~/renderer/reducers/settings";
+import { setNameForCookieSeed, toggleAmnesiaForCookieSeed } from "~/renderer/actions/settings";
+import { useDispatch, useSelector } from "react-redux";
 
 const illustrations = {
   nanoS,
@@ -165,6 +176,71 @@ const TooltipContentWrapper: ThemedComponent<{}> = styled.div`
   }
 `;
 
+const DeviceNameBox = styled(Box)`
+  position: relative;
+  left: -11px;
+`;
+
+const DeviceName = styled.input`
+  ${fontFamily}
+  ${fontSize}
+  ${color}
+
+  border: 1px solid;
+  border-color: transparent;
+  border-radius: 4px;
+  padding: 1px 9px 2px;
+  max-width: 250px !important;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  background-color: transparent;
+
+  + svg {
+    display: none;
+  }
+
+  :hover {
+    border-color: ${p => (!p.disabled ? p.theme.colors.palette.text.shade30 : "transparent")};
+    cursor: text;
+
+    + svg {
+      display: ${p => (!p.disabled ? "inline" : "none")};
+    }
+  }
+
+  :focus {
+    max-width: 190px !important;
+    border-color: ${p => p.theme.colors.wallet};
+    background: ${p => (p.theme.colors.palette.type === "light" ? "#fff" : "none")};
+
+    + svg {
+      display: none;
+    }
+  }
+`;
+
+const IconButton: ThemedComponent<{ disabled?: boolean }> = styled(Tabbable).attrs(() => ({
+  alignItems: "center",
+  justifyContent: "center",
+}))`
+  width: 34px;
+  height: 34px;
+  border: 1px solid ${p => p.theme.colors.palette.text.shade60};
+  border-radius: 4px;
+  &:hover {
+    color: ${p => (p.disabled ? "" : p.theme.colors.palette.text.shade100)};
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.2))};
+    border-color: ${p => p.theme.colors.palette.text.shade100};
+  }
+
+  &:active {
+    background: ${p => (p.disabled ? "" : rgba(p.theme.colors.palette.divider, 0.3))};
+  }
+`;
+
 const TooltipContent = ({
   name,
   bytes,
@@ -266,36 +342,122 @@ const DeviceStorage = ({
 
   const firmwareOutdated = manager.firmwareUnsupported(deviceModel.id, deviceInfo) || firmware;
 
+  // HACKATHON notes, not really renaming anything but rather adding a name to a cookie and
+  // storing a mapping of them. This way we can show a human readable name on the left instead of
+  // a long ugly hash. (!)
+  const cookieSeedNames = useSelector(cookieSeedNamesSelector);
+  const amnesiaCookies = useSelector(amnesiaCookiesSelector);
+  const device = useSelector(getCurrentDevice);
+  const isAmnesia = amnesiaCookies.includes(device?.cookie);
+  const dispatch = useDispatch();
+  const [name, setName] = useState(cookieSeedNames[device?.cookie] || "Unnamed device");
+  const [editingName, setEditingName] = useState(false);
+
+  const submitNameChange = () => {
+    dispatch(setNameForCookieSeed({ cookieSeed: device?.cookie, name }));
+  };
+
+  const submitNameChangeOnEnter = e => {
+    if (e.key === "Enter") {
+      e.target.blur();
+      submitNameChange();
+    }
+  };
+
+  const toggleAmnesia = useCallback(() => {
+    dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: device?.cookie }));
+  }, [device, dispatch]);
+
+  useEffect(() => {
+    if (!editingName) {
+      setName(cookieSeedNames[device?.cookie]);
+    }
+  }, [cookieSeedNames, device, editingName]);
+
+  const color1 = useTheme("colors.palette.text.shade100");
+  const color2 = useTheme("colors.palette.background.paper");
+
   return (
     <Card p={20} mb={4} horizontal>
       <Box position="relative" flex="0 0 140px" mr={20}>
         <DeviceIllustration deviceModel={deviceModel} />
       </Box>
       <div style={{ flex: 1 }}>
-        <Box horizontal alignItems="center">
-          <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={5}>
-            {deviceModel.productName}
-          </Text>
-          <Box ml={2}>
+        <Box horizontal alignItems="center" mb={1}>
+          <Box mr={3}>
             <Tooltip content={<Trans i18nKey="manager.deviceStorage.genuine" />}>
               <IconCheckFull size={18} />
             </Tooltip>
           </Box>
+          <DeviceNameBox horizontal alignItems="center" pr={8} flow={2}>
+            <DeviceName
+              color="palette.text.shade100"
+              ff="Inter|SemiBold"
+              fontSize={7}
+              onFocus={() => {
+                setEditingName(true);
+                setTimeout(() => {
+                  document.execCommand("selectAll", false, null);
+                });
+              }}
+              onBlur={() => {
+                setEditingName(false);
+                setTimeout(() => {
+                  window.getSelection().removeAllRanges();
+                });
+              }}
+              onKeyPress={submitNameChangeOnEnter}
+              onChange={e => setName(e.target.value)}
+              disableEllipsis={editingName}
+              value={name || "Unnamed device"}
+              id="device-header-name"
+            />
+            <IconPen size={14} />
+            {editingName && (
+              <IconButton>
+                <Box justifyContent="center">
+                  <IconCross size={14} />
+                </Box>
+              </IconButton>
+            )}
+            {editingName && (
+              <IconButton onMouseDown={submitNameChange}>
+                <Box justifyContent="center" color="positiveGreen">
+                  <IconCheck size={14} />
+                </Box>
+              </IconButton>
+            )}
+          </DeviceNameBox>
         </Box>
-        <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
-          {firmwareOutdated ? (
-            <Trans
-              i18nKey="manager.deviceStorage.firmwareAvailable"
-              values={{ version: deviceInfo.version }}
-            />
-          ) : (
-            <Trans
-              i18nKey="manager.deviceStorage.firmwareUpToDate"
-              values={{ version: deviceInfo.version }}
-            />
-          )}{" "}
-          {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
-        </Text>
+        <Box horizontal alignItems={"center"}>
+          <Box flex={1}>
+            <Text ff="Inter|SemiBold" color="palette.text.shade40" fontSize={4}>
+              {firmwareOutdated ? (
+                <Trans
+                  i18nKey="manager.deviceStorage.firmwareAvailable"
+                  values={{ version: deviceInfo.version }}
+                />
+              ) : (
+                <Trans
+                  i18nKey="manager.deviceStorage.firmwareUpToDate"
+                  values={{ version: deviceInfo.version }}
+                />
+              )}{" "}
+              {<HighlightVersion>{deviceInfo.version}</HighlightVersion>}
+            </Text>
+          </Box>
+          <Button
+            secondary
+            outlineGrey
+            style={{ backgroundColor: isAmnesia ? color1 : color2 }}
+            onClick={toggleAmnesia}
+          >
+            <IconAmnesia size={16} color={isAmnesia ? color2 : color1} />
+            <Text ml={2} color={isAmnesia ? color2 : color1}>
+              {"Amnesia mode"}
+            </Text>
+          </Button>
+        </Box>
         <Separator />
         <Info>
           <div>
