@@ -52,7 +52,7 @@ const ModalHeaderAction = styled(Tabbable).attrs(() => ({
       ? p.theme.colors.palette.background.paper
       : p.theme.colors.palette.text.shade60};
   top: 0;
-  align-self: ${p => (p.right ? "flex-end" : "flex-start")};
+  align-self: ${p => (p.right ? "center" : "flex-start")};
   line-height: 0;
   ${p =>
     p.onClick
@@ -99,6 +99,7 @@ const Container: ThemedComponent<{ hasTitle: boolean }> = styled(Box).attrs(() =
 }))`
   min-height: ${p => (p.hasTitle ? 66 : 0)}px;
   background: ${p => (p.isAmnesia ? p.theme.colors.palette.text.shade100 : "transparent")};
+  height: ${p => (p.isAmnesia ? "110px" : "")};
 `;
 
 const ModalHeader = ({
@@ -143,8 +144,8 @@ const ModalHeader = ({
               alignItems={"center"}
               justifyContent={"center"}
               flex={1}
-              mb={1}
-              mt={1}
+              mb={2}
+              mt={2}
             >
               <IconAmnesia size={16} color={"white"} />
             </Box>

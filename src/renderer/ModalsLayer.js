@@ -62,7 +62,7 @@ const ModalsLayer = ({ visibleModals }: *) => {
   );
 };
 
-const visibleModalsSelector = createSelector(modalsStateSelector, state =>
+export const visibleModalsSelector = createSelector(modalsStateSelector, state =>
   Object.keys(state)
     .filter((name: string) => !!modals[name] && state[name].isOpened)
     .map((name: string) => ({ name, ...state[name].data })),

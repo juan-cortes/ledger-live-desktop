@@ -9,7 +9,7 @@ import { useSelector } from "react-redux";
 import ModalContent from "./ModalContent";
 import ModalHeader from "./ModalHeader";
 import ModalFooter from "./ModalFooter";
-
+import { visibleModalsSelector } from "~/renderer/ModalsLayer";
 import type { RenderProps } from ".";
 
 type Props = {
@@ -46,7 +46,10 @@ const ModalBody = ({
 
   const device = useSelector(getCurrentDevice);
   const amnesiaCookies = useSelector(amnesiaCookiesSelector);
-  const isAmnesia = amnesiaCookies.includes(device?.cookie);
+  // Hackathon, style hijacking for amnesia + add account
+  const visibleModals = useSelector(visibleModalsSelector);
+  const isAddAccount = visibleModals.find(vm => vm.name === "MODAL_ADD_ACCOUNTS");
+  const isAmnesia = amnesiaCookies.includes(device?.cookie) && isAddAccount;
 
   const renderedFooter = renderFooter && renderFooter(renderProps);
   return (
