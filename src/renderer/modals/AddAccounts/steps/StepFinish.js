@@ -8,6 +8,7 @@ import Button from "~/renderer/components/Button";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import type { StepProps } from "..";
+import useIsAmnesia from "~/renderer/hooks/useIsAmnesia";
 
 export default function StepFinish({ currency, checkedAccountsIds }: StepProps) {
   const { t } = useTranslation();
@@ -36,6 +37,7 @@ export default function StepFinish({ currency, checkedAccountsIds }: StepProps) 
 
 export function StepFinishFooter({ onGoStep1, onCloseModal }: StepProps) {
   const { t } = useTranslation();
+  const isAmnesia = useIsAmnesia();
   return (
     <>
       <Box horizontal alignItems="center" justifyContent="space-between" grow>
@@ -50,7 +52,8 @@ export function StepFinishFooter({ onGoStep1, onCloseModal }: StepProps) {
         <Button
           event="Page AddAccounts Step 4 AddMore"
           id={"add-accounts-finish-close-button"}
-          primary
+          amnesia={isAmnesia}
+          primary={!isAmnesia}
           onClick={onCloseModal}
         >
           {t("common.done")}

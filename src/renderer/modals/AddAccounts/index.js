@@ -23,7 +23,8 @@ import StepConnectDevice from "./steps/StepConnectDevice";
 import StepImport, { StepImportFooter } from "./steps/StepImport";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
-
+import { amnesiaCookiesSelector } from "~/renderer/reducers/application";
+import { useSelector } from "react-redux";
 type Props = {
   device: ?Device,
   existingAccounts: Account[],
@@ -115,6 +116,7 @@ const mapStateToProps = createStructuredSelector({
   device: getCurrentDevice,
   existingAccounts: accountsSelector,
   blacklistedTokenIds: blacklistedTokenIdsSelector,
+  amnesiaCookies: amnesiaCookiesSelector,
 });
 
 const mapDispatchToProps = {
@@ -223,7 +225,9 @@ class AddAccounts extends PureComponent<Props, State> {
   };
 
   render() {
-    const { device, existingAccounts, blacklistedTokenIds } = this.props;
+    const { device, existingAccounts, blacklistedTokenIds, amnesiaCookies } = this.props;
+    const isAmnesia = amnesiaCookies.includes(device?.cookie);
+
     const {
       stepId,
       currency,
@@ -268,6 +272,7 @@ class AddAccounts extends PureComponent<Props, State> {
         preventBackdropClick={stepId === "import"}
         render={({ onClose }) => (
           <Stepper
+            isAmnesia={isAmnesia}
             key={reset} // THIS IS A HACK because stepper is not controllable. FIXME
             title={title}
             stepId={stepId}

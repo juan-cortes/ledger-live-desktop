@@ -40,6 +40,7 @@ import { amnesiaCookiesSelector } from "~/renderer/reducers/application";
 import { setNameForCookieSeed } from "~/renderer/actions/settings";
 import { toggleAmnesiaForCookieSeed } from "~/renderer/actions/application";
 import { useDispatch, useSelector } from "react-redux";
+import useIsAmnesia from "~/renderer/hooks/useIsAmnesia";
 
 const illustrations = {
   nanoS,
@@ -349,11 +350,10 @@ const DeviceStorage = ({
   // storing a mapping of them. This way we can show a human readable name on the left instead of
   // a long ugly hash. (!)
   const cookieSeedNames = useSelector(cookieSeedNamesSelector);
-  const amnesiaCookies = useSelector(amnesiaCookiesSelector);
   const device = useSelector(getCurrentDevice);
   const maybeCookie = device?.cookie;
 
-  const isAmnesia = amnesiaCookies.includes(maybeCookie);
+  const isAmnesia = useIsAmnesia();
   const dispatch = useDispatch();
   const [name, setName] = useState(
     cookieSeedNames[maybeCookie] || isAmnesia ? "Amnesia wallet" : "Nano S",
@@ -421,7 +421,7 @@ const DeviceStorage = ({
               onKeyPress={submitNameChangeOnEnter}
               onChange={e => setName(e.target.value)}
               disableEllipsis={editingName}
-              value={name || isAmnesia ? "Amnesia wallet" : "Nano S"}
+              value={editingName ? name : name || (isAmnesia ? "Amnesia wallet" : "Nano S")}
               id="device-header-name"
             />
             <IconPen size={14} />

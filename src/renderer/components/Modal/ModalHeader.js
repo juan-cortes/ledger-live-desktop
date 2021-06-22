@@ -11,6 +11,7 @@ import Tabbable from "~/renderer/components/Box/Tabbable";
 
 import IconCross from "~/renderer/icons/Cross";
 import IconAngleLeft from "~/renderer/icons/AngleLeft";
+import IconAmnesia from "~/renderer/icons/Amnesia";
 
 const TitleContainer = styled(Box).attrs(() => ({
   vertical: true,
@@ -21,8 +22,8 @@ const TitleContainer = styled(Box).attrs(() => ({
   pointer-events: none;
 `;
 
-const ModalTitle = styled(Box).attrs(() => ({
-  color: "palette.text.shade100",
+const ModalTitle = styled(Box).attrs(({ isAmnesia }) => ({
+  color: isAmnesia ? "palette.background.paper" : "palette.text.shade100",
   ff: "Inter|Medium",
   fontSize: 6,
 }))`
@@ -46,7 +47,10 @@ const ModalHeaderAction = styled(Tabbable).attrs(() => ({
   p: 3,
 }))`
   border-radius: 8px;
-  color: ${p => p.color || p.theme.colors.palette.text.shade60};
+  color: ${p =>
+    p.color || p.isAmnesia
+      ? p.theme.colors.palette.background.paper
+      : p.theme.colors.palette.text.shade60};
   top: 0;
   align-self: ${p => (p.right ? "flex-end" : "flex-start")};
   line-height: 0;
@@ -60,7 +64,9 @@ const ModalHeaderAction = styled(Tabbable).attrs(() => ({
       // $FlowFixMe
       Text
     } {
-      color: ${p.theme.colors.palette.text.shade80};
+      color: ${
+        p.isAmnesia ? p.theme.colors.palette.background.paper : p.theme.colors.palette.text.shade80
+      };
     }
 
     &:active,
@@ -92,6 +98,7 @@ const Container: ThemedComponent<{ hasTitle: boolean }> = styled(Box).attrs(() =
   relative: true,
 }))`
   min-height: ${p => (p.hasTitle ? 66 : 0)}px;
+  background: ${p => (p.isAmnesia ? p.theme.colors.palette.text.shade100 : "transparent")};
 `;
 
 const ModalHeader = ({
@@ -100,20 +107,27 @@ const ModalHeader = ({
   onBack,
   onClose,
   style = {},
+  isAmnesia,
 }: {
   children?: any,
   subTitle?: React$Node,
   onBack?: void => void,
   onClose?: void => void,
   style?: *,
+  isAmnesia?: boolean,
 }) => {
   const { t } = useTranslation();
+
   return (
-    <Container hasTitle={Boolean(children || subTitle)} style={style}>
+    <Container isAmnesia={isAmnesia} hasTitle={Boolean(children || subTitle)} style={style}>
       {onBack ? (
-        <ModalHeaderAction onClick={onBack} id="modal-back-button">
+        <ModalHeaderAction isAmnesia={isAmnesia} onClick={onBack} id="modal-back-button">
           <IconAngleLeft size={12} />
-          <Text ff="Inter|Medium" fontSize={4} color="palette.text.shade40">
+          <Text
+            ff="Inter|Medium"
+            fontSize={4}
+            color={isAmnesia ? "palette.background.paper" : "palette.text.shade40"}
+          >
             {t("common.back")}
           </Text>
         </ModalHeaderAction>
@@ -123,11 +137,29 @@ const ModalHeader = ({
       {children || subTitle ? (
         <TitleContainer>
           {subTitle && <ModalSubTitle id="modal-subtitle">{subTitle}</ModalSubTitle>}
-          <ModalTitle id="modal-title">{children}</ModalTitle>
+          {isAmnesia ? (
+            <Box
+              color={isAmnesia ? "palette.background.paper" : "palette.text.shade40"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              flex={1}
+              mb={1}
+              mt={1}
+            >
+              <IconAmnesia size={16} color={"white"} />
+            </Box>
+          ) : null}
+          <ModalTitle
+            id="modal-title"
+            isAmnesia={isAmnesia}
+            color={isAmnesia ? "palette.background.paper" : "palette.text.shade40"}
+          >
+            {children}
+          </ModalTitle>
         </TitleContainer>
       ) : null}
       {onClose ? (
-        <ModalHeaderAction right onClick={onClose} id="modal-close-button">
+        <ModalHeaderAction isAmnesia={isAmnesia} right onClick={onClose} id="modal-close-button">
           <IconCross size={16} />
         </ModalHeaderAction>
       ) : (

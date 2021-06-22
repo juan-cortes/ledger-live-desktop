@@ -70,6 +70,46 @@ const buttonStyles: { [_: string]: Style } = {
        };
      `,
   },
+  amnesia: {
+    default: p => `
+      background: ${
+        p.disabled
+          ? `${p.theme.colors.palette.action.disabled} !important`
+          : p.inverted
+          ? p.theme.colors.palette.primary.contrastText
+          : p.theme.colors.palette.text.shade100
+      };
+      color: ${
+        p.disabled
+          ? p.theme.colors.palette.text.shade20
+          : p.inverted
+          ? p.theme.colors.palette.primary.main
+          : p.theme.colors.palette.background.paper
+      };
+      box-shadow: ${
+        p.isFocused
+          ? `
+          0 0 0 1px ${darken(p.theme.colors.palette.text.shade100, 0.3)} inset,
+          0 0 0 1px ${rgba(p.theme.colors.palette.text.shade100, 0.5)},
+          0 0 0 3px ${rgba(p.theme.colors.palette.text.shade100, 0.3)};`
+          : ""
+      }
+    `,
+    hover: p => `
+       background: ${
+         p.inverted
+           ? darken(p.theme.colors.palette.background.paper, 0.05)
+           : lighten(p.theme.colors.palette.text.shade100, 0.05)
+       };
+     `,
+    active: p => `
+       background: ${
+         p.inverted
+           ? darken(p.theme.colors.palette.background.paper, 0.1)
+           : darken(p.theme.colors.palette.text.shade100, 0.1)
+       };
+     `,
+  },
   danger: {
     default: p => `
       background: ${
@@ -313,6 +353,7 @@ export type Props = {
   eventProperties?: Object,
   mr?: number,
   mx?: number,
+  amnesia?: boolean,
 };
 
 class Button extends PureComponent<

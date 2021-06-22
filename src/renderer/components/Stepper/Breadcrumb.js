@@ -55,7 +55,8 @@ const Bar: ThemedComponent<{
   }
 
   &:after {
-    background: ${p => p.theme.colors.wallet};
+    background: ${p =>
+      p.isAmnesia ? p.theme.colors.palette.text.shade100 : p.theme.colors.wallet};
     right: ${p => (p.current === 0 ? 0 : `${p.current}%`)};
     z-index: 1;
   }
@@ -85,7 +86,7 @@ class Breadcrumb extends PureComponent<Props> {
   };
 
   render() {
-    const { items, stepsDisabled, stepsErrors, currentStep, ...props } = this.props;
+    const { items, stepsDisabled, stepsErrors, currentStep, isAmnesia, ...props } = this.props;
     const itemsLength = items.length;
     const start = 100 / itemsLength / 2;
 
@@ -102,10 +103,12 @@ class Breadcrumb extends PureComponent<Props> {
 
                 if (i === stepIndex) {
                   status = "active";
+                  status = isAmnesia ? "amnesia" : status; // I dont want to fight you
                 }
 
                 if (i < stepIndex) {
                   status = "valid";
+                  status = isAmnesia ? "amnesia" : status; // I dont want to fight you
                 }
 
                 if (stepsErrors.includes(i)) {
@@ -115,7 +118,7 @@ class Breadcrumb extends PureComponent<Props> {
                 if (stepsDisabled.includes(i)) {
                   status = "disable";
                 }
-
+                
                 return (
                   <Step key={i} status={status} number={i + 1}>
                     {item.label}
@@ -124,6 +127,7 @@ class Breadcrumb extends PureComponent<Props> {
               })}
           </Wrapper>
           <Bar
+            isAmnesia={isAmnesia}
             end={start}
             start={start}
             disabled={

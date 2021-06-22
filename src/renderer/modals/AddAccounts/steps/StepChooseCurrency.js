@@ -18,6 +18,7 @@ import { openModal } from "~/renderer/actions/modals";
 import FullNodeStatus from "~/renderer/modals/AddAccounts/FullNodeStatus";
 import useSatStackStatus from "~/renderer/hooks/useSatStackStatus";
 import useEnv from "~/renderer/hooks/useEnv";
+import useIsAmnesia from "~/renderer/hooks/useIsAmnesia";
 import type { SatStackStatus } from "@ledgerhq/live-common/lib/families/bitcoin/satstack";
 
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
@@ -62,6 +63,8 @@ export const StepChooseCurrencyFooter = ({
 }: StepProps) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const isAmnesia = useIsAmnesia();
+
   const isToken = currency && currency.type === "TokenCurrency";
   const satStackAlreadyConfigured = useEnv("SATSTACK");
 
@@ -125,7 +128,13 @@ export const StepChooseCurrencyFooter = ({
       {isToken ? (
         <Box horizontal>
           {parentCurrency ? (
-            <Button ml={2} primary onClick={onTokenCta} id="modal-token-continue-button">
+            <Button
+              ml={2}
+              amnesia={isAmnesia}
+              primary={!isAmnesia}
+              onClick={onTokenCta}
+              id="modal-token-continue-button"
+            >
               {parentTokenAccount
                 ? t("addAccounts.cta.receive")
                 : t("addAccounts.cta.addAccountName", {
@@ -136,7 +145,8 @@ export const StepChooseCurrencyFooter = ({
         </Box>
       ) : (
         <Button
-          primary
+          amnesia={isAmnesia}
+          primary={!isAmnesia}
           disabled={!currency || fullNodeNotReady}
           onClick={() => transitionTo("connectDevice")}
           id="modal-continue-button"

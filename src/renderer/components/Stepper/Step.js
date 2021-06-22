@@ -33,11 +33,15 @@ const Wrapper: ThemedComponent<{ status: Status }> = styled(Box).attrs((p: { sta
 const StepNumber = styled(Box).attrs(p => ({
   color: ["active", "valid", "error"].includes(p.status)
     ? "palette.primary.contrastText"
+    : p.status === "amnesia"
+    ? "palette.background.paper"
     : "palette.text.shade40",
   bg: ["active", "valid"].includes(p.status)
     ? "palette.primary.main"
     : p.status === "error"
     ? "alertRed"
+    : p.status === "amnesia"
+    ? "palette.text.shade100"
     : "palette.background.paper",
   ff: p.status === "active" ? "Inter|Bold" : "Inter|SemiBold",
 }))`
@@ -80,7 +84,7 @@ const Step = ({ number, status, children }: Props) => {
   return (
     <Wrapper status={status}>
       <StepNumber status={status}>
-        {status === "active" || status === "next" ? (
+        {status === "active" || status === "next" || status === "amnesia" ? (
           number
         ) : status === "valid" ? (
           <IconCheck size={10} />

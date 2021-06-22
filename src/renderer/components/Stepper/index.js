@@ -39,6 +39,7 @@ type Props<T, StepProps> = {
   children?: React$Node,
   params?: any,
   hideCloseButton?: boolean,
+  black?: boolean,
 };
 
 const Stepper = <T, StepProps>({
@@ -53,6 +54,7 @@ const Stepper = <T, StepProps>({
   errorSteps,
   children,
   hideCloseButton,
+  isAmnesia,
   ...props
 }: Props<T, StepProps>) => {
   const deviceBlocked = useDeviceBlocked();
@@ -103,6 +105,7 @@ const Stepper = <T, StepProps>({
         <>
           {hideBreadcrumb ? null : (
             <Breadcrumb
+              isAmnesia={isAmnesia}
               mb={props.error && props.signed ? 4 : 6}
               currentStep={indexVisible}
               items={visibleSteps}

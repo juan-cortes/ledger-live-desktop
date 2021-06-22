@@ -1,6 +1,10 @@
 // @flow
 
-import React, { PureComponent } from "react";
+import React, { useEffect } from "react";
+
+import { getCurrentDevice } from "~/renderer/reducers/devices";
+import { amnesiaCookiesSelector } from "~/renderer/reducers/application";
+import { useSelector } from "react-redux";
 
 import ModalContent from "./ModalContent";
 import ModalHeader from "./ModalHeader";
@@ -22,44 +26,50 @@ type Props = {
   refocusWhenChange?: any,
 };
 
-class ModalBody extends PureComponent<Props> {
-  componentDidUpdate(prevProps: Props) {
-    const shouldFocus = prevProps.refocusWhenChange !== this.props.refocusWhenChange;
-    if (shouldFocus && this._content.current) {
-      this._content.current.focus();
-    }
-  }
+const ModalBody = ({
+  refocusWhenChange,
+  onBack,
+  onClose,
+  title,
+  subTitle,
+  headerStyle,
+  render,
+  renderFooter,
+  renderProps,
+  noScroll,
+  modalFooterStyle,
+}: any) => {
+  const content = React.createRef();
+  useEffect(() => {
+    content.current && content.current.focus();
+  }, [content, refocusWhenChange]);
 
-  _content: React$ElementRef<*> = React.createRef();
+  const device = useSelector(getCurrentDevice);
+  const amnesiaCookies = useSelector(amnesiaCookiesSelector);
+  const isAmnesia = amnesiaCookies.includes(device?.cookie);
 
-  render() {
-    const {
-      onBack,
-      onClose,
-      title,
-      subTitle,
-      headerStyle,
-      render,
-      renderFooter,
-      renderProps,
-      noScroll,
-      modalFooterStyle,
-    } = this.props;
-
-    // For `renderFooter` returning falsy values, we need to resolve first.
-    const renderedFooter = renderFooter && renderFooter(renderProps);
-    return (
-      <>
-        <ModalHeader subTitle={subTitle} onBack={onBack} onClose={onClose} style={headerStyle}>
-          {title || null}
-        </ModalHeader>
-        <ModalContent ref={this._content} noScroll={noScroll}>
-          {render && render(renderProps)}
-        </ModalContent>
-        {renderedFooter && <ModalFooter style={modalFooterStyle}>{renderedFooter}</ModalFooter>}
-      </>
-    );
-  }
-}
+  const renderedFooter = renderFooter && renderFooter(renderProps);
+  return (
+    <>
+      <ModalHeader
+        isAmnesia={isAmnesia}
+        subTitle={subTitle}
+        onBack={onBack}
+        onClose={onClose}
+        style={headerStyle}
+      >
+        {title || null}
+      </ModalHeader>
+      <ModalContent isAmnesia={isAmnesia} ref={content} noScroll={noScroll}>
+        {render && render(renderProps)}
+      </ModalContent>
+      {renderedFooter && (
+        <ModalFooter isAmnesia={isAmnesia} style={modalFooterStyle}>
+          {renderedFooter}
+        </ModalFooter>
+      )}
+    </>
+  );
+};
 
 export default ModalBody;

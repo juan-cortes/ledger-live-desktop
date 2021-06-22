@@ -30,6 +30,7 @@ import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import Switch from "~/renderer/components/Switch";
+import useIsAmnesia from "~/renderer/hooks/useIsAmnesia";
 
 import type { StepProps } from "..";
 import InfoCircle from "~/renderer/icons/InfoCircle";
@@ -366,6 +367,7 @@ export const StepImportFooter = ({
   err,
   t,
 }: StepProps) => {
+  const isAmnesia = useIsAmnesia();
   const dispatch = useDispatch();
   const willCreateAccount = checkedAccountsIds.some(id => {
     const account = scannedAccounts.find(a => a.id === id);
@@ -405,7 +407,12 @@ export const StepImportFooter = ({
       <Box grow>{currency && <CurrencyBadge currency={currency} />}</Box>
       {scanStatus === "error" &&
         (isHandledError ? (
-          <Button id={"add-accounts-full-node-reconfigure"} primary onClick={goFullNode}>
+          <Button
+            id={"add-accounts-full-node-reconfigure"}
+            amnesia={isAmnesia}
+            primary={!isAmnesia}
+            onClick={goFullNode}
+          >
             {t("addAccounts.fullNodeConfigure")}
           </Button>
         ) : (
@@ -426,7 +433,8 @@ export const StepImportFooter = ({
       {isHandledError || scanStatus === "error" ? null : (
         <Button
           id={"add-accounts-import-add-button"}
-          primary
+          amnesia={isAmnesia}
+          primary={!isAmnesia}
           disabled={scanStatus !== "finished"}
           onClick={onClick}
         >

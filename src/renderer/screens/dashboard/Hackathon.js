@@ -3,9 +3,9 @@ import React from "react";
 import styled from "styled-components";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { cookieSeedNamesSelector } from "~/renderer/reducers/settings";
-import { amnesiaCookiesSelector } from "~/renderer/reducers/application";
 import { useSelector } from "react-redux";
-import { useConditionalDebounce } from "./useConditionalDebounce";
+import { useConditionalDebounce } from "~/renderer/hooks/useConditionalDebounce";
+import useIsAmnesia from "~/renderer/hooks/useIsAmnesia";
 import Tabbable from "~/renderer/components/Box/Tabbable";
 import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
@@ -62,11 +62,10 @@ const Container = styled(Tabbable).attrs(() => ({
 
 const Hackathon = ({ collapsed, onClick }: { collapsed: boolean, onClick: () => void }) => {
   const rawDevice = useSelector(getCurrentDevice);
-  const device = useConditionalDebounce(rawDevice, 3000, key => !key); // NB debounce disconnects in favor of connects
+  const device = useConditionalDebounce(rawDevice, 1200, key => !key); // NB debounce disconnects in favor of connects
+  const isAmnesia = useIsAmnesia();
 
-  const amnesiaCookies = useSelector(amnesiaCookiesSelector);
   const location = useLocation();
-  const isAmnesia = amnesiaCookies.includes(device?.cookie);
   const cookieSeedNames = useSelector(cookieSeedNamesSelector);
   const wording = device
     ? isAmnesia
