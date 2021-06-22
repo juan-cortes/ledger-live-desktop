@@ -350,13 +350,17 @@ const DeviceStorage = ({
   const cookieSeedNames = useSelector(cookieSeedNamesSelector);
   const amnesiaCookies = useSelector(amnesiaCookiesSelector);
   const device = useSelector(getCurrentDevice);
-  const isAmnesia = amnesiaCookies.includes(device?.cookie);
+  const maybeCookie = device?.cookie;
+
+  const isAmnesia = amnesiaCookies.includes(maybeCookie);
   const dispatch = useDispatch();
-  const [name, setName] = useState(cookieSeedNames[device?.cookie] || "Unnamed device");
+  const [name, setName] = useState(
+    cookieSeedNames[maybeCookie] || isAmnesia ? "Amnesia wallet" : "Nano S",
+  );
   const [editingName, setEditingName] = useState(false);
 
   const submitNameChange = () => {
-    dispatch(setNameForCookieSeed({ cookieSeed: device?.cookie, name }));
+    dispatch(setNameForCookieSeed({ cookieSeed: maybeCookie, name }));
   };
 
   const submitNameChangeOnEnter = e => {
@@ -367,14 +371,15 @@ const DeviceStorage = ({
   };
 
   const toggleAmnesia = useCallback(() => {
-    dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: device?.cookie }));
-  }, [device, dispatch]);
+    dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: maybeCookie }));
+    dispatch(setNameForCookieSeed({ cookieSeed: maybeCookie, name: "" }));
+  }, [dispatch, maybeCookie]);
 
   useEffect(() => {
     if (!editingName) {
-      setName(cookieSeedNames[device?.cookie]);
+      setName(cookieSeedNames[maybeCookie]);
     }
-  }, [cookieSeedNames, device, editingName]);
+  }, [cookieSeedNames, device, editingName, maybeCookie]);
 
   const color1 = useTheme("colors.palette.text.shade100");
   const color2 = useTheme("colors.palette.background.paper");
@@ -411,7 +416,7 @@ const DeviceStorage = ({
               onKeyPress={submitNameChangeOnEnter}
               onChange={e => setName(e.target.value)}
               disableEllipsis={editingName}
-              value={name || "Nano S"}
+              value={name || isAmnesia ? "Amnesia wallet" : "Nano S"}
               id="device-header-name"
             />
             <IconPen size={14} />

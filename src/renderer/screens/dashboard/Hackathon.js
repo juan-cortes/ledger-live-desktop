@@ -64,12 +64,18 @@ const Hackathon = ({ collapsed, onClick }: { collapsed: boolean, onClick: () => 
   const rawDevice = useSelector(getCurrentDevice);
   const device = useConditionalDebounce(rawDevice, 3000, key => !key); // NB debounce disconnects in favor of connects
 
-  const location = useLocation();
-  const cookieSeedNames = useSelector(cookieSeedNamesSelector);
-  const wording = device ? cookieSeedNames[device.cookie] || "Nano S" : "No device detected";
   const amnesiaCookies = useSelector(amnesiaCookiesSelector);
-  const isInManager = location.pathname === "/manager";
+  const location = useLocation();
   const isAmnesia = amnesiaCookies.includes(device?.cookie);
+  const cookieSeedNames = useSelector(cookieSeedNamesSelector);
+  const wording = device
+    ? isAmnesia
+      ? "Amnesia wallet"
+      : cookieSeedNames[device.cookie]
+      ? cookieSeedNames[device.cookie]
+      : "Nano S"
+    : "No device detected";
+  const isInManager = location.pathname === "/manager";
 
   const shade60 = useTheme("colors.palette.text.shade60");
   const white = useTheme("colors.palette.background.paper");
