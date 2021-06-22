@@ -63,6 +63,9 @@ import MODAL_LEND_WITHDRAW_FLOW from "../screens/lend/modals/Withdraw";
 import MODAL_LEND_NO_ETHEREUM_ACCOUNT from "../screens/lend/modals/NoEthereumAccount";
 import MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT from "../screens/lend/modals/EmptyAccountDeposit";
 
+// Amnesia
+import MODAL_AMNESIA from "./Amnesia";
+
 const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_WEBSOCKET_BRIDGE,
   MODAL_EXPORT_OPERATIONS,
@@ -121,6 +124,8 @@ const modals: { [_: string]: React$ComponentType<any> } = {
   MODAL_LEND_EMPTY_ACCOUNT_DEPOSIT,
   MODAL_SWAP,
   MODAL_FULL_NODE,
+  // Amnesia
+  MODAL_AMNESIA,
 };
 
 export default modals;

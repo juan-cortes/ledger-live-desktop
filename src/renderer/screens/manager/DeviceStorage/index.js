@@ -13,6 +13,7 @@ import type { CryptoCurrency } from "@ledgerhq/live-common/lib/types";
 import type { AppsDistribution } from "@ledgerhq/live-common/lib/apps";
 import type { DeviceModel } from "@ledgerhq/devices";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { openModal } from "~/renderer/actions/modals";
 
 import ByteSize from "~/renderer/components/ByteSize";
 import { rgba } from "~/renderer/styles/helpers";
@@ -371,9 +372,13 @@ const DeviceStorage = ({
   };
 
   const toggleAmnesia = useCallback(() => {
-    dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: maybeCookie }));
-    dispatch(setNameForCookieSeed({ cookieSeed: maybeCookie, name: "" }));
-  }, [dispatch, maybeCookie]);
+    if (global.localStorage.getItem("amnesiaModeAcked")) {
+      dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: device?.cookie }));
+    } else {
+      dispatch(openModal("MODAL_AMNESIA"))
+    }
+
+  }, [device, dispatch]);
 
   useEffect(() => {
     if (!editingName) {
