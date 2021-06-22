@@ -200,7 +200,7 @@ const DeviceName = styled.input`
   text-overflow: ellipsis;
   display: inline-block;
   background-color: transparent;
-
+  pointer-events: ${p => (p.disabled ? "none" : "auto")};
   + svg {
     display: none;
   }
@@ -373,6 +373,7 @@ const DeviceStorage = ({
   const toggleAmnesia = useCallback(() => {
     if (global.localStorage.getItem("amnesiaModeAcked") === "true") {
       dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: device?.cookie }));
+      dispatch(setNameForCookieSeed({ cookieSeed: device?.cookie, name: "" }));
     } else {
       dispatch(openModal("MODAL_AMNESIA"));
     }
@@ -401,6 +402,7 @@ const DeviceStorage = ({
           </Box>
           <DeviceNameBox horizontal alignItems="center" pr={8} flow={2}>
             <DeviceName
+              disabled={isAmnesia}
               color="palette.text.shade100"
               ff="Inter|SemiBold"
               fontSize={7}
