@@ -5,7 +5,7 @@ function SvgComponent({ size, color = "currentColor" }: { size: number, color?: 
   return (
     <svg width={size} height={size} viewBox="0 0 22 22" fill="none">
       <mask id="prefix__a" maskUnits="userSpaceOnUse" x={0} y={0} width={22} height={11}>
-        <path fill="#C4C4C4" d="M0 0h22v11H0z" />
+        <path fill="#FFF" d="M0 0h22v11H0z" />
       </mask>
       <g mask="url(#prefix__a)">
         <path

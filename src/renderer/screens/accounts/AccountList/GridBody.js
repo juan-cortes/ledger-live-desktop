@@ -1,12 +1,11 @@
 // @flow
 import React, { useMemo, useState, useEffect } from "react";
-import { useSpring, useTransition, animated } from "react-spring";
+import { useTransition, animated } from "react-spring";
 import styled from "styled-components";
 import type { Account, TokenAccount } from "@ledgerhq/live-common/lib/types";
 import type { PortfolioRange } from "@ledgerhq/live-common/lib/portfolio/v2/types";
 import AccountCard from "../AccountGridItem";
 import AccountCardPlaceholder from "../AccountGridItem/Placeholder";
-import Text from "~/renderer/components/Text";
 import useMeasure from "./useMeasure";
 import useMedia from "./useMedia";
 import { useSelector } from "react-redux";

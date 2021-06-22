@@ -18,9 +18,10 @@ type Props = {
   accountId: string,
   parentId?: string,
   yellow?: boolean,
+  amnesia?: boolean,
 };
 
-export default function Star({ accountId, parentId, yellow }: Props) {
+export default function Star({ accountId, parentId, yellow, amnesia }: Props) {
   const isAccountStarred = useSelector(state => isStarredAccountSelector(state, { accountId }));
   const dispatch = useDispatch();
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
@@ -37,7 +38,7 @@ export default function Star({ accountId, parentId, yellow }: Props) {
   const MaybeButtonWrapper = yellow ? ButtonWrapper : FloatingWrapper;
 
   return (
-    <MaybeButtonWrapper filled={isAccountStarred}>
+    <MaybeButtonWrapper filled={isAccountStarred} amnesia={amnesia}>
       <StarWrapper id="account-star-button" onClick={toggleStar}>
         {disableAnimation ? (
           <StarIcon
@@ -67,6 +68,7 @@ const starBust = keyframes`
 `;
 
 const ButtonWrapper: ThemedComponent<{ filled?: boolean }> = styled.div`
+  opacity: ${p => (p.amnesia ? 0 : 1)};
   height: 34px;
   width: 34px;
   border: 1px solid
@@ -82,7 +84,9 @@ const ButtonWrapper: ThemedComponent<{ filled?: boolean }> = styled.div`
       p.filled ? p.theme.colors.starYellow : p.theme.colors.palette.text.shade100};
   }
 `;
-const FloatingWrapper: ThemedComponent<{}> = styled.div``;
+const FloatingWrapper: ThemedComponent<{}> = styled.div`
+  opacity: ${p => (p.amnesia ? 0 : 1)};
+`;
 
 // NB negative margin to allow the burst to overflow
 const StarWrapper: ThemedComponent<{}> = styled.div`

@@ -6,6 +6,7 @@ import { amnesiaCookiesSelector, cookieSeedNamesSelector } from "~/renderer/redu
 import { useSelector } from "react-redux";
 import { useConditionalDebounce } from "./useConditionalDebounce";
 import Tabbable from "~/renderer/components/Box/Tabbable";
+import Text from "~/renderer/components/Text";
 import Ellipsis from "~/renderer/components/Ellipsis";
 import NanoSIcon from "~/renderer/icons/NanoSFold";
 import AmensiaIcon from "~/renderer/icons/Amnesia";
@@ -33,7 +34,9 @@ const Container = styled(Tabbable).attrs(() => ({
       ? p.theme.colors.palette.background.paper
       : p.isInManager
       ? p.theme.colors.white
-      : p.theme.colors.palette.text.shade100};
+      : p.isActive
+      ? p.theme.colors.palette.text.shade100
+      : p.theme.colors.palette.text.shade60};
   background: ${p =>
     p.isAmnesia
       ? p.theme.colors.palette.secondary.main
@@ -42,7 +45,15 @@ const Container = styled(Tabbable).attrs(() => ({
       : p.isActive
       ? p.theme.colors.palette.background.paper
       : p.theme.colors.palette.text.shade5};
-  border: ${p => (p.isAmnesia ? "" : p.isActive ? `1px solid ${p.theme.colors.wallet}` : "")};
+  border: 1px solid
+    ${p =>
+      p.isAmnesia
+        ? p.theme.colors.palette.secondary.main
+        : p.isInManager
+        ? p.theme.colors.wallet
+        : p.isActive
+        ? p.theme.colors.palette.background.paper
+        : p.theme.colors.palette.text.shade5};
   opacity: ${p => (p.disabled ? 0.5 : 1)};
 
   &:hover {
@@ -54,14 +65,16 @@ const Hackathon = ({ collapsed, onClick }: { collapsed: boolean, onClick: () => 
   const rawDevice = useSelector(getCurrentDevice);
   const device = useConditionalDebounce(rawDevice, 3000, key => !key); // NB debounce disconnects in favor of connects
 
+  const location = useLocation();
   const cookieSeedNames = useSelector(cookieSeedNamesSelector);
   const wording = device ? cookieSeedNames[device.cookie] || "Nano S" : "No device detected";
   const amnesiaCookies = useSelector(amnesiaCookiesSelector);
-  const shade100 = useTheme("colors.palette.text.shade100");
-  const white = useTheme("colors.palette.background.paper");
-  const location = useLocation();
   const isInManager = location.pathname === "/manager";
   const isAmnesia = amnesiaCookies.includes(device?.cookie);
+
+  const shade60 = useTheme("colors.palette.text.shade60");
+  const white = useTheme("colors.palette.background.paper");
+  const wallet = useTheme("colors.wallet");
 
   return (
     <Container
@@ -71,14 +84,16 @@ const Hackathon = ({ collapsed, onClick }: { collapsed: boolean, onClick: () => 
       isAmnesia={isAmnesia}
     >
       {isAmnesia ? (
-        <AmensiaIcon size={16} color={isAmnesia || isInManager ? white : shade100} />
+        <AmensiaIcon size={16} color={isAmnesia || isInManager ? white : shade60} />
       ) : (
-        <NanoSIcon size={16} color={isAmnesia || isInManager ? white : shade100} />
+        <NanoSIcon size={16} color={isAmnesia || isInManager ? white : device ? wallet : shade60} />
       )}
       <Box grow shrink>
         <Hide visible={!collapsed}>
           <Box horizontal justifyContent="space-between" alignItems="center">
-            <Ellipsis>{wording}</Ellipsis>
+            <Text ff={device ? "Inter|SemiBold" : "Inter|Medium"} fontSize={3}>
+              <Ellipsis>{wording}</Ellipsis>
+            </Text>
           </Box>
         </Hide>
       </Box>

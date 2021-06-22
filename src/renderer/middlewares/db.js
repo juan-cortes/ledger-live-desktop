@@ -26,13 +26,18 @@ export default (store: any) => (next: any) => (action: any) => {
     const state = store.getState();
     const rawAccounts = accountsSelector(state);
     const knownAmnesiaCookies = amnesiaCookiesSelector(state);
+
     /**
      * HACKATHON-NOTES
      * Drop all the accounts belonging to amnesic cookies.
      */
-    const accounts = rawAccounts.filter(a => {
-      return !knownAmnesiaCookies.includes(a.cookie);
-    });
+    let accounts = rawAccounts;
+    if (!process.env.FAKE_AMNESIA) {
+      accounts = accounts.filter(a => {
+        return !knownAmnesiaCookies.includes(a.cookie);
+      });
+    }
+
     setKey("app", "accounts", accounts);
 
     // ^ TODO ultimately we'll do same for accounts to drop DB: pattern

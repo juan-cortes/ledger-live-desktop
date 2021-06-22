@@ -8,6 +8,8 @@ import AccountCardHeader from "./Header";
 import AccountCardBody from "./Body";
 import AccountContextMenu from "~/renderer/components/ContextMenu/AccountContextMenu";
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
+import { rgba, mix } from "~/renderer/styles/helpers";
+
 type Props = {
   hidden?: boolean,
   account: TokenAccount | Account,
@@ -50,13 +52,27 @@ const Card: ThemedComponent<{}> = styled(Box).attrs(() => ({
 }))`
   margin: 10px;
   cursor: pointer;
-  border: ${p => (p.amnesia ? 2 : 1)}px solid
-    ${p => (p.amnesia ? "black" : p.cookie ? p.theme.colors.wallet : "transparent")};
+  border: 1px solid
+    ${p =>
+      p.amnesia
+        ? p.theme.colors.palette.text.shade100
+        : p.cookie
+        ? p.theme.colors.wallet
+        : "transparent"};
   transition: background-color ease-in-out 200ms;
   :hover {
     border-color: ${p =>
-      p.amnesia ? "black" : p.cookie ? p.theme.colors.wallet : p.theme.colors.palette.text.shade20};
-    ${p => (p.cookie ? "box-shadow: 0px 0px 0px 4px rgba(100, 144, 241, 0.3)" : "")};
+      p.amnesia
+        ? p.theme.colors.palette.text.shade100
+        : p.cookie
+        ? p.theme.colors.wallet
+        : p.theme.colors.palette.text.shade20};
+    ${p =>
+      p.amnesia
+        ? `box-shadow: 0px 0px 0px 4px ${rgba(p.theme.colors.palette.text.shade100, 0.3)};`
+        : p.cookie
+        ? "box-shadow: 0px 0px 0px 4px rgba(100, 144, 241, 0.3);"
+        : ""}
   }
   :active {
     border-color: ${p => p.theme.colors.palette.text.shade20};
