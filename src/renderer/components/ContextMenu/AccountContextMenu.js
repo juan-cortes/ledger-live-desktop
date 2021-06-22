@@ -7,6 +7,7 @@ import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/lib/ac
 import { openModal } from "~/renderer/actions/modals";
 import IconReceive from "~/renderer/icons/Receive";
 import IconSend from "~/renderer/icons/Send";
+import IconSelfSend from "~/renderer/icons/SelfSend";
 import IconStar from "~/renderer/icons/Star";
 import IconBuy from "~/renderer/icons/Exchange";
 import IconSwap from "~/renderer/icons/Swap";
@@ -48,6 +49,12 @@ export default function AccountContextMenu({
         label: "accounts.contextMenu.send",
         Icon: IconSend,
         callback: () => dispatch(openModal("MODAL_SEND", { account, parentAccount })),
+      },
+      {
+        label: "Send to self",
+        Icon: IconSelfSend,
+        callback: () =>
+          dispatch(openModal("MODAL_SEND", { isSelfSend: true, account, parentAccount })),
       },
       {
         label: "accounts.contextMenu.receive",

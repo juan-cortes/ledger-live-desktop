@@ -1,7 +1,8 @@
 // @flow
 
-import React, { PureComponent } from "react";
-import { getMainAccount } from "@ledgerhq/live-common/lib/account";
+import React, { useState, useCallback, PureComponent } from "react";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/lib/account";
+import { getAccountBridge } from "@ledgerhq/live-common/lib/bridge";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -32,10 +33,36 @@ const StepRecipient = ({
   maybeRecipient,
   onResetMaybeRecipient,
   currencyName,
+  isSelfSend,
 }: StepProps) => {
-  if (!status) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const [recipient, setRecipient] = useState(null);
 
+  const onSetRecipient = useCallback(
+    recipient => {
+      if (!account) return;
+      const bridge = getAccountBridge(account, null);
+      onChangeTransaction(
+        bridge.updateTransaction(transaction, { recipient: recipient?.freshAddress }),
+      );
+      setRecipient(recipient);
+    },
+    [account, onChangeTransaction, transaction],
+  );
+
+  const filter = useCallback(
+    a => {
+      if (!account) return false;
+      const sourceCurrency = getAccountCurrency(account);
+      const thisCurrency = getAccountCurrency(a);
+      return (
+        a.id !== account.id && a.cookie === account.cookie && sourceCurrency.id === thisCurrency.id
+      );
+    },
+    [account],
+  );
+
+  if (!status) return null;
   return (
     <Box flow={4}>
       <TrackPage category="Send Flow" name="Step Recipient" currencyName={currencyName} />
@@ -54,17 +81,28 @@ const StepRecipient = ({
       <StepRecipientSeparator />
       {account && transaction && mainAccount && (
         <>
-          <RecipientField
-            status={status}
-            autoFocus={openedFromAccount}
-            account={mainAccount}
-            transaction={transaction}
-            onChangeTransaction={onChangeTransaction}
-            bridgePending={bridgePending}
-            t={t}
-            initValue={maybeRecipient}
-            resetInitValue={onResetMaybeRecipient}
-          />
+          {isSelfSend ? (
+            <SelectAccount
+              filter={filter}
+              withSubAccounts
+              enforceHideEmptySubAccounts
+              autoFocus={!openedFromAccount}
+              onChange={onSetRecipient}
+              value={recipient}
+            />
+          ) : (
+            <RecipientField
+              status={status}
+              autoFocus={openedFromAccount}
+              account={mainAccount}
+              transaction={transaction}
+              onChangeTransaction={onChangeTransaction}
+              bridgePending={bridgePending}
+              t={t}
+              initValue={maybeRecipient}
+              resetInitValue={onResetMaybeRecipient}
+            />
+          )}
           <SendRecipientFields
             account={mainAccount}
             status={status}

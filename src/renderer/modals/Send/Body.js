@@ -35,6 +35,7 @@ type OwnProps = {|
   onClose: () => void,
   params: {
     account: ?AccountLike,
+    isSelfSend?: boolean,
     parentAccount: ?Account,
     startWithWarning?: boolean,
     recipient?: string,
@@ -136,6 +137,7 @@ const Body = ({
   updateAccountWithUpdater,
 }: Props) => {
   const openedFromAccount = !!params.account;
+  const isSelfSend = params.isSelfSend;
   const [steps] = useState(() => createSteps(params.disableBacks));
 
   // initial values might coming from deeplink
@@ -232,7 +234,11 @@ const Body = ({
   const error = transactionError || bridgeError;
 
   const stepperProps = {
-    title: stepId === "warning" ? t("common.information") : t("send.title"),
+    title: isSelfSend
+      ? "Send to self"
+      : stepId === "warning"
+      ? t("common.information")
+      : t("send.title"),
     stepId,
     steps,
     errorSteps,
@@ -265,6 +271,7 @@ const Body = ({
     updateTransaction,
     onConfirmationHandler: params.onConfirmationHandler,
     onFailHandler: params.onFailHandler,
+    isSelfSend,
   };
 
   if (!status) return null;
