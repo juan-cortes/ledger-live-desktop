@@ -30,7 +30,7 @@ export default function AccountCard({
 
   return (
     <AccountContextMenu account={account} parentAccount={parentAccount}>
-      <Card {...props} style={hidden ? { display: "none" } : {}} p={20} onClick={onClick}>
+      <Card {...props} style={hidden ? { display: "none" } : {}} p={3} onClick={onClick}>
         <AccountCardHeader
           amnesia={props?.amnesia}
           account={account}
@@ -54,7 +54,9 @@ const Card: ThemedComponent<{}> = styled(Box).attrs(() => ({
     ${p => (p.amnesia ? "black" : p.cookie ? p.theme.colors.wallet : "transparent")};
   transition: background-color ease-in-out 200ms;
   :hover {
-    border-color: ${p => p.theme.colors.palette.text.shade20};
+    border-color: ${p =>
+      p.amnesia ? "black" : p.cookie ? p.theme.colors.wallet : p.theme.colors.palette.text.shade20};
+    ${p => (p.cookie ? "box-shadow: 0px 0px 0px 4px rgba(100, 144, 241, 0.3)" : "")};
   }
   :active {
     border-color: ${p => p.theme.colors.palette.text.shade20};

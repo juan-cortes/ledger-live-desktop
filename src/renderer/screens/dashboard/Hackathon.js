@@ -55,9 +55,7 @@ const Hackathon = ({ collapsed, onClick }: { collapsed: boolean, onClick: () => 
   const device = useConditionalDebounce(rawDevice, 3000, key => !key); // NB debounce disconnects in favor of connects
 
   const cookieSeedNames = useSelector(cookieSeedNamesSelector);
-  const wording = device
-    ? cookieSeedNames[device.cookie] || "Unnamed device"
-    : "No device detected";
+  const wording = device ? cookieSeedNames[device.cookie] || "Nano S" : "No device detected";
   const amnesiaCookies = useSelector(amnesiaCookiesSelector);
   const shade100 = useTheme("colors.palette.text.shade100");
   const white = useTheme("colors.palette.background.paper");

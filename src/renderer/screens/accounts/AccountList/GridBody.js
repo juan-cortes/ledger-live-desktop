@@ -43,10 +43,8 @@ export default function GridBody({
   const rawDevice = useSelector(getCurrentDevice);
   const device = useDebounce(rawDevice, 3000);
   const [items, setItems] = useState([]);
-  const [totalConnectedAccounts, setTotalConnectAccounts] = useState(0);
 
   useEffect(() => {
-    let totalConnectedAccounts = 0;
     setItems(
       [...visibleAccounts, ...hiddenAccounts]
         .filter(Boolean)
@@ -58,7 +56,6 @@ export default function GridBody({
         })
         .map(account => {
           const cookie = device?.cookie && account.cookie === device.cookie;
-          totalConnectedAccounts += !!cookie;
 
           return {
             account,
@@ -69,26 +66,17 @@ export default function GridBody({
           };
         }),
     );
-    setTotalConnectAccounts(totalConnectedAccounts);
   }, [visibleAccounts, hiddenAccounts, device, amnesiaCookies]);
 
   const [heights, gridItems] = useMemo(() => {
     const heights = new Array(columns).fill(0); // Each column gets a height starting with zero
     const gridItems = items.map((child, i) => {
-      if (totalConnectedAccounts && i === totalConnectedAccounts) {
-        // Skip the next items, to go to next row, you know?
-        for (let e = 1; e < heights.length; e++) heights[e] = heights[0];
-      }
       const column = heights.indexOf(Math.min(...heights)); // Basic masonry-grid placing, puts tile into the smallest column using Math.min
-      const offsetY = totalConnectedAccounts ? 0 : 0; // hack for the title space
-      const xy = [
-        (width / columns) * column,
-        (heights[column] += child.height) - child.height + offsetY,
-      ]; // X = container width / number of columns * column index, Y = it's just the height of the current column
+      const xy = [(width / columns) * column, (heights[column] += child.height) - child.height]; // X = container width / number of columns * column index, Y = it's just the height of the current column
       return { ...child, xy, width: 300, height: child.height };
     });
     return [heights, gridItems];
-  }, [columns, items, totalConnectedAccounts, width]);
+  }, [columns, items, width]);
 
   const transitions = useTransition(gridItems, i => i.css, {
     from: ({ xy, height, width }) => ({ xy, height, width, opacity: 0 }),
@@ -99,26 +87,8 @@ export default function GridBody({
     trail: 25,
   });
 
-  const containerThingy = useSpring({
-    to: {
-      opacity: 1,
-      width: "100%",
-      height: Math.ceil(totalConnectedAccounts / columns) * 250,
-    },
-    from: {
-      opacity: 0,
-      width: "100%",
-      height: Math.ceil(totalConnectedAccounts / columns) * 250,
-    },
-    reverse: !totalConnectedAccounts,
-  });
-
   return (
     <List {...bind} style={{ height: Math.max(...heights) }}>
-      <animated.div style={containerThingy}>
-        <Backdrop>
-        </Backdrop>
-      </animated.div>
       {transitions.map(({ item, props: { xy, ...rest }, key }) => (
         <animated.div
           key={key}
@@ -161,15 +131,4 @@ const List = styled.div`
     height: 100%;
     overflow: hidden;
   }
-`;
-
-const Backdrop = styled.div`
-  position: absolute;
-  background: ${p => p.theme.colors.palette.divider};
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-  font-size: 20px;
-  padding-left:10px;
-  padding-top:10px;
 `;

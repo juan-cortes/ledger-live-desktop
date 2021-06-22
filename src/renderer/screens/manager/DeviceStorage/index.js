@@ -409,7 +409,7 @@ const DeviceStorage = ({
               onKeyPress={submitNameChangeOnEnter}
               onChange={e => setName(e.target.value)}
               disableEllipsis={editingName}
-              value={name || "Unnamed device"}
+              value={name || "Nano S"}
               id="device-header-name"
             />
             <IconPen size={14} />
