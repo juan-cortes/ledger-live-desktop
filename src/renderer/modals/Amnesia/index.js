@@ -1,5 +1,5 @@
 // @flow
-import React, {useCallback } from "react";
+import React, { useCallback } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -42,39 +42,36 @@ const AmnesiaModal = () => {
     dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: device?.cookie }));
     dispatch(setNameForCookieSeed({ cookieSeed: device?.cookie, name: "" }));
     onClose();
-  }, [dispatch, onClose]);
+  }, [device, dispatch, onClose]);
 
   return (
     <Modal name="MODAL_AMNESIA" preventBackdropClick centered>
       <ModalBody
         title={modalTitle}
-
         render={() => (
           <Box>
-            <Illustration/>
+            <Illustration />
             <Box mb={3}>
-              <Text ff="Inter|SemiBold" textAlign={"center"} fontSize={"15px"} color="palette.text.shade100">
+              <Text
+                ff="Inter|SemiBold"
+                textAlign={"center"}
+                fontSize={"15px"}
+                color="palette.text.shade100"
+              >
                 {contentTitle}
               </Text>
             </Box>
             <Box>
-              <BulletList
-                centered
-                bullets={bullets}
-              />
+              <BulletList centered bullets={bullets} />
             </Box>
           </Box>
         )}
-
         renderFooter={() => (
           <Box horizontal alignItems="center" justifyContent="flex-end" flow={2}>
             <Button onClick={onClose}>
               <Trans i18nKey="common.cancel" />
             </Button>
-            <Button
-              primary
-              onClick={onConfirmation}
-            >
+            <Button primary onClick={onConfirmation}>
               {gotIt}
             </Button>
           </Box>

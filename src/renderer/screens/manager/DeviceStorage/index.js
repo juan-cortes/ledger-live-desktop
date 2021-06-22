@@ -36,7 +36,6 @@ import IconCheck from "~/renderer/icons/Check";
 
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { cookieSeedNamesSelector } from "~/renderer/reducers/settings";
-import { amnesiaCookiesSelector } from "~/renderer/reducers/application";
 import { setNameForCookieSeed } from "~/renderer/actions/settings";
 import { toggleAmnesiaForCookieSeed } from "~/renderer/actions/application";
 import { useDispatch, useSelector } from "react-redux";
@@ -372,12 +371,11 @@ const DeviceStorage = ({
   };
 
   const toggleAmnesia = useCallback(() => {
-    if (global.localStorage.getItem("amnesiaModeAcked")) {
+    if (global.localStorage.getItem("amnesiaModeAcked") === "true") {
       dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: device?.cookie }));
     } else {
-      dispatch(openModal("MODAL_AMNESIA"))
+      dispatch(openModal("MODAL_AMNESIA"));
     }
-
   }, [device, dispatch]);
 
   useEffect(() => {
