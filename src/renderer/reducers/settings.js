@@ -109,6 +109,7 @@ export type SettingsState = {
   showClearCacheBanner: boolean,
   fullNodeEnabled: boolean,
   cookieSeedNames: { [string]: string },
+  trustedCookieSeeds: string[],
 };
 
 const defaultsForCurrency: Currency => CurrencySettings = crypto => {
@@ -155,6 +156,7 @@ const INITIAL_STATE: SettingsState = {
   showClearCacheBanner: false,
   fullNodeEnabled: false,
   cookieSeedNames: {},
+  trustedCookieSeeds: [],
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -266,6 +268,19 @@ const handlers: Object = {
     return {
       ...state,
       cookieSeedNames: { ...state.cookieSeedNames, [cookieSeed]: name },
+    };
+  },
+
+  SET_COOKIE_SEED_TRUST: (state: SettingsState, { payload: { cookieSeed, value } }) => {
+    let trustedCookieSeeds = [...state.trustedCookieSeeds];
+    if (!value) {
+      trustedCookieSeeds = trustedCookieSeeds.filter(s => s !== cookieSeed);
+    } else {
+      trustedCookieSeeds.push(cookieSeed);
+    }
+    return {
+      ...state,
+      trustedCookieSeeds,
     };
   },
 };
@@ -384,6 +399,7 @@ export const carouselVisibilitySelector = (state: State) => state.settings.carou
 export const hasAcceptedSwapKYCSelector = (state: State) => state.settings.hasAcceptedSwapKYC;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
 export const cookieSeedNamesSelector = (state: State) => state.settings.cookieSeedNames;
+export const trustedCookieSeedsSelector = (state: State) => state.settings.trustedCookieSeeds;
 
 export const swapAcceptedProviderIdsSelector = (state: State) =>
   state.settings.swapAcceptedProviderIds;

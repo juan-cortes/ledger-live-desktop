@@ -115,6 +115,7 @@ export const showToken = (tokenId: string) => ({
   payload: tokenId,
 });
 
+
 type FetchSettings = (*) => (Dispatch<*>) => void;
 export const fetchSettings: FetchSettings = (settings: *) => dispatch => {
   dispatch({
@@ -143,6 +144,11 @@ export const dismissBanner = (bannerKey: string) => ({
 
 export const setNameForCookieSeed = payload => ({
   type: "SET_COOKIE_SEED_NAME",
+  payload,
+});
+
+export const setCookieSeedTrust = payload => ({
+  type: "SET_COOKIE_SEED_TRUST",
   payload,
 });
 
