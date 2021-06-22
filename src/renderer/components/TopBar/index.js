@@ -8,8 +8,10 @@ import styled from "styled-components";
 
 import { lock } from "~/renderer/actions/application";
 import { openModal } from "~/renderer/actions/modals";
+import { setAccounts } from "~/renderer/actions/accounts";
 import { discreetModeSelector } from "~/renderer/reducers/settings";
-import { hasAccountsSelector } from "~/renderer/reducers/accounts";
+
+import { accountsSelector, hasAccountsSelector } from "~/renderer/reducers/accounts";
 
 import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import { Bar, ItemContainer } from "./shared";
@@ -28,7 +30,7 @@ import IconSettings from "~/renderer/icons/Settings";
 import ActivityIndicator from "./ActivityIndicator";
 import { ServiceStatusIndicator } from "./ServiceStatusIndicator";
 import { setDiscreetMode } from "~/renderer/actions/settings";
-import { hasPasswordSelector } from "~/renderer/reducers/application";
+import { hasPasswordSelector, amnesiaCookiesSelector } from "~/renderer/reducers/application";
 import { NotificationIndicator } from "~/renderer/components/TopBar/NotificationIndicator";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 
@@ -63,12 +65,18 @@ const TopBar = () => {
   const history = useHistory();
   const location = useLocation();
   const hasPassword = useSelector(hasPasswordSelector);
+  const accounts = useSelector(accountsSelector);
   const hasAccounts = useSelector(hasAccountsSelector);
   const discreetMode = useSelector(discreetModeSelector);
+  const amnesiaCookies = useSelector(amnesiaCookiesSelector);
 
   const [helpSideBarVisible, setHelpSideBarVisible] = useState(false);
 
-  const handleLock = useCallback(() => dispatch(lock()), [dispatch]);
+  const handleLock = useCallback(() => {
+    // ONLY HOOKING ONTO THIS ONE;
+    dispatch(lock());
+    dispatch(setAccounts(accounts.filter(a => !amnesiaCookies.includes(a.cookie))));
+  }, [accounts, amnesiaCookies, dispatch]);
   const handleDiscreet = useCallback(() => dispatch(setDiscreetMode(!discreetMode)), [
     discreetMode,
     dispatch,
