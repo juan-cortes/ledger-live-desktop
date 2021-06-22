@@ -5,12 +5,8 @@
 import { setKey } from "~/renderer/storage";
 
 import { accountsSelector } from "./../reducers/accounts";
-import {
-  settingsExportSelector,
-  areSettingsLoaded,
-  amnesiaCookiesSelector,
-} from "./../reducers/settings";
-
+import { settingsExportSelector, areSettingsLoaded } from "./../reducers/settings";
+import { amnesiaCookiesSelector } from "./../reducers/application";
 let DB_MIDDLEWARE_ENABLED = true;
 
 // ability to temporary disable the db middleware from outside

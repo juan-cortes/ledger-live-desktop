@@ -34,8 +34,10 @@ import IconCross from "~/renderer/icons/Cross";
 import IconCheck from "~/renderer/icons/Check";
 
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { cookieSeedNamesSelector, amnesiaCookiesSelector } from "~/renderer/reducers/settings";
-import { setNameForCookieSeed, toggleAmnesiaForCookieSeed } from "~/renderer/actions/settings";
+import { cookieSeedNamesSelector } from "~/renderer/reducers/settings";
+import { amnesiaCookiesSelector } from "~/renderer/reducers/application";
+import { setNameForCookieSeed } from "~/renderer/actions/settings";
+import { toggleAmnesiaForCookieSeed } from "~/renderer/actions/application";
 import { useDispatch, useSelector } from "react-redux";
 
 const illustrations = {

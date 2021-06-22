@@ -2,7 +2,8 @@
 import React from "react";
 import styled from "styled-components";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { amnesiaCookiesSelector, cookieSeedNamesSelector } from "~/renderer/reducers/settings";
+import { cookieSeedNamesSelector } from "~/renderer/reducers/settings";
+import { amnesiaCookiesSelector } from "~/renderer/reducers/application";
 import { useSelector } from "react-redux";
 import { useConditionalDebounce } from "./useConditionalDebounce";
 import Tabbable from "~/renderer/components/Box/Tabbable";
@@ -49,10 +50,8 @@ const Container = styled(Tabbable).attrs(() => ({
     ${p =>
       p.isAmnesia
         ? p.theme.colors.palette.secondary.main
-        : p.isInManager
+        : p.isInManager || p.isActive
         ? p.theme.colors.wallet
-        : p.isActive
-        ? p.theme.colors.palette.background.paper
         : p.theme.colors.palette.text.shade5};
   opacity: ${p => (p.disabled ? 0.5 : 1)};
 

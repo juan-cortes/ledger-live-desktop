@@ -12,6 +12,7 @@ export type ApplicationState = {
   osDarkMode?: boolean,
   osLanguage?: LangAndRegion,
   navigationLocked?: boolean,
+  amnesiaCookies: string[],
 };
 
 const { language, region } = getSystemLocale();
@@ -27,6 +28,7 @@ const state: ApplicationState = {
   },
   hasPassword: false,
   dismissedCarousel: false,
+  amnesiaCookies: [],
 };
 
 const handlers = {
@@ -34,6 +36,18 @@ const handlers = {
     ...state,
     ...payload,
   }),
+  TOGGLE_AMNESIA_FOR_COOKIE_SEED: (state: ApplicationState, { payload: { cookieSeed } }) => {
+    let amnesiaCookies = [...state.amnesiaCookies];
+    if (amnesiaCookies.includes(cookieSeed)) {
+      amnesiaCookies = amnesiaCookies.filter(s => s !== cookieSeed);
+    } else {
+      amnesiaCookies.push(cookieSeed);
+    }
+    return {
+      ...state,
+      amnesiaCookies,
+    };
+  },
 };
 
 // NOTE: V2 `lock` and `unlock` have been moved to actions/application.js
@@ -52,6 +66,8 @@ export const osDarkModeSelector = (state: Object) => state.application.osDarkMod
 export const osLangAndRegionSelector = (state: Object) => state.application.osLanguage;
 
 export const isNavigationLocked = (state: Object) => state.application.navigationLocked;
+
+export const amnesiaCookiesSelector = (state: Object) => state.application.amnesiaCookies;
 
 // Exporting reducer
 

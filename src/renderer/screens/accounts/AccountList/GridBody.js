@@ -12,8 +12,7 @@ import { useSelector } from "react-redux";
 import { useDebounce } from "@ledgerhq/live-common/lib//hooks/useDebounce";
 
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { amnesiaCookiesSelector } from "~/renderer/reducers/settings";
-
+import { amnesiaCookiesSelector } from "../../../reducers/application";
 type Props = {
   visibleAccounts: (Account | TokenAccount)[],
   hiddenAccounts: (Account | TokenAccount)[],

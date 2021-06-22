@@ -146,11 +146,6 @@ export const setNameForCookieSeed = payload => ({
   payload,
 });
 
-export const toggleAmnesiaForCookieSeed = payload => ({
-  type: "TOGGLE_AMNESIA_FOR_COOKIE_SEED",
-  payload,
-});
-
 export const setPreferredDeviceModel = (preferredDeviceModel: DeviceModelId) =>
   saveSettings({ preferredDeviceModel });
 

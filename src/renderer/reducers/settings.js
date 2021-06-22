@@ -108,7 +108,6 @@ export type SettingsState = {
   swapProviders?: AvailableProvider[],
   showClearCacheBanner: boolean,
   fullNodeEnabled: boolean,
-  amnesiaCookies: string[],
   cookieSeedNames: { [string]: string },
 };
 
@@ -155,7 +154,6 @@ const INITIAL_STATE: SettingsState = {
   swapProviders: [],
   showClearCacheBanner: false,
   fullNodeEnabled: false,
-  amnesiaCookies: [],
   cookieSeedNames: {},
 };
 
@@ -270,18 +268,6 @@ const handlers: Object = {
       cookieSeedNames: { ...state.cookieSeedNames, [cookieSeed]: name },
     };
   },
-  TOGGLE_AMNESIA_FOR_COOKIE_SEED: (state: SettingsState, { payload: { cookieSeed } }) => {
-    let amnesiaCookies = [...state.amnesiaCookies];
-    if (amnesiaCookies.includes(cookieSeed)) {
-      amnesiaCookies = amnesiaCookies.filter(s => s !== cookieSeed);
-    } else {
-      amnesiaCookies.push(cookieSeed);
-    }
-    return {
-      ...state,
-      amnesiaCookies,
-    };
-  },
 };
 
 // TODO refactor selectors to *Selector naming convention
@@ -385,7 +371,6 @@ export const confirmationsNbForCurrencySelector = (
   return defs.confirmationsNb ? defs.confirmationsNb.def : 0;
 };
 
-export const amnesiaCookiesSelector = (state: State) => state.settings.amnesiaCookies;
 export const preferredDeviceModelSelector = (state: State) => state.settings.preferredDeviceModel;
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
