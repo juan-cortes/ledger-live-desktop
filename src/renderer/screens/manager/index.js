@@ -18,6 +18,7 @@ const connectManagerExec = command("connectManager");
 const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManagerExec);
 
 export const IllustrationWrapper: ThemedComponent<{}> = styled.div`
+  width: 200px;
   align-self: flex-end;
 `;
 const Illustration = styled.img.attrs(() => ({ src: bannerIllustration }))``;
@@ -25,6 +26,8 @@ const bannerTitle = "Don’t have a Ledger wallet yet?"
 const bannerDescription = "Get a Ledger wallet to unlock the full Ledger Live experience."
 const buttonText = "Buy a Ledger wallet"
 const bannerUrl = "https://shop.ledger.com/pages/hardware-wallets-comparison"
+
+
 
 const Manager = () => {
   const [appsToRestore, setRestoreApps] = useState();
@@ -42,15 +45,17 @@ const Manager = () => {
         <Dashboard {...result} onReset={onReset} appsToRestore={appsToRestore} />
       ) : (
         <>
-          <Card>
-            <Box horizontal flex={1} p={26}>
-              <Text ff="Inter|SemiBold" fontSize={6} color="palette.text.shade100">
+          <Card horizontal>
+            <Box vertical flex={1} p={26}>
+              <Text ff="Inter|SemiBold" fontSize={6} color="palette.text.shade100" mb={1}>
                 {bannerTitle}
               </Text>
-              <Text ff="Inter|Regular" fontSize={5}>
+              <Text ff="Inter|Medium" fontSize={5} mb={3}>
                 {bannerDescription}
               </Text>
-              <ExternalLinkButton url={bannerUrl} label={buttonText} primary/>
+              <Box horizontal>
+                <ExternalLinkButton url={bannerUrl} label={buttonText} primary/>
+              </Box>
             </Box>
             <IllustrationWrapper>
               <Illustration/>
