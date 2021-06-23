@@ -27,6 +27,7 @@ import EmptyStateInstalledApps from "~/renderer/screens/dashboard/EmptyStateInst
 import EmptyStateAccounts from "~/renderer/screens/dashboard/EmptyStateAccounts";
 import { useRefreshAccountsOrderingEffect } from "~/renderer/actions/general";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
+import DeviceDetectionBanner from "~/renderer/components/DeviceDetectionBanner";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer: ThemedComponent<{}> = styled.div`
@@ -83,6 +84,7 @@ export default function DashboardPage() {
         totalCurrencies={totalCurrencies}
       />
       <Box flow={7} id="portfolio-container">
+        <DeviceDetectionBanner/>
         {!hasInstalledApps ? (
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (

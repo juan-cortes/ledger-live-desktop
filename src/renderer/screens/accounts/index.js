@@ -19,6 +19,7 @@ import type { ThemedComponent } from "~/renderer/styles/StyleProvider";
 import AccountList from "./AccountList";
 import AccountsHeader from "./AccountsHeader";
 import MigrationBanner from "~/renderer/modals/MigrateAccounts/Banner";
+import DeviceDetectionBanner from "~/renderer/components/DeviceDetectionBanner";
 
 export default function AccountsPage() {
   const mode = useSelector(accountsViewModeSelector);
@@ -59,6 +60,7 @@ export default function AccountsPage() {
       <TopBannerContainer>
         <MigrationBanner />
       </TopBannerContainer>
+      <DeviceDetectionBanner/>
       <AccountsHeader />
       <AccountList onAccountClick={onAccountClick} accounts={accounts} range={range} mode={mode} />
     </Box>
