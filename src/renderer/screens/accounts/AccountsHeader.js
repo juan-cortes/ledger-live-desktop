@@ -9,12 +9,14 @@ import { openModal } from "~/renderer/actions/modals";
 import IconPlus from "~/renderer/icons/Plus";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
+import useIsAmnesia from "~/renderer/hooks/useIsAmnesia";
 
 import OptionsButton from "./OptionsButton";
 
 const AccountsHeader = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const isAmnesia = useIsAmnesia();
 
   const openAddAccounts = useCallback(() => {
     dispatch(openModal("MODAL_ADD_ACCOUNTS"));
@@ -26,7 +28,13 @@ const AccountsHeader = () => {
         {t("accounts.title")}
       </Box>
       <Box horizontal flow={2} alignItems="center" justifyContent="flex-end">
-        <Button small primary onClick={openAddAccounts} id="accounts-add-account-button">
+        <Button
+          small
+          primary={!isAmnesia}
+          amnesia={isAmnesia}
+          onClick={openAddAccounts}
+          id="accounts-add-account-button"
+        >
           <Box horizontal flow={1} alignItems="center">
             <IconPlus size={12} />
             <Box>{t("addAccounts.cta.add")}</Box>
