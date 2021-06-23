@@ -35,6 +35,7 @@ import { isCurrencySupported } from "~/renderer/screens/exchange/config";
 import { useHistory } from "react-router-dom";
 import IconWalletConnect from "~/renderer/icons/WalletConnect";
 import IconSend from "~/renderer/icons/Send";
+import IconSelfSend from "~/renderer/icons/SelfSend";
 import IconReceive from "~/renderer/icons/Receive";
 import DropDownSelector from "~/renderer/components/DropDownSelector";
 import Button from "~/renderer/components/Button";
@@ -140,6 +141,10 @@ const AccountHeaderActions = ({ account, parentAccount, openModal, t }: Props) =
     openModal("MODAL_SEND", { parentAccount, account });
   }, [parentAccount, account, openModal]);
 
+  const onSelfSend = useCallback(() => {
+    openModal("MODAL_SEND", { isSelfSend: true, parentAccount, account });
+  }, [parentAccount, account, openModal]);
+
   const onReceive = useCallback(() => {
     openModal("MODAL_RECEIVE", { parentAccount, account });
   }, [parentAccount, account, openModal]);
@@ -167,6 +172,12 @@ const AccountHeaderActions = ({ account, parentAccount, openModal, t }: Props) =
       onClick: onSend,
       icon: IconSend,
       label: <Trans i18nKey="send.title" />,
+    },
+    {
+      key: "Send2",
+      onClick: onSelfSend,
+      icon: IconSelfSend,
+      label: "Internal transfer",
     },
     {
       key: "Receive",
