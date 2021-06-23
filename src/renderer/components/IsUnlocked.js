@@ -56,6 +56,7 @@ export default function IsUnlocked({ children }: { children: any }) {
   }, [device, isLocked, needsDisconnect]);
 
   useEffect(() => {
+    if (!isLocked) return; // Only care if we are locked
     // fake a delay after we connect to convey we are unlocking, the needs disconnect can be bypassed by
     // entering an application but it's ok for the demo
     if (!needsDisconnect && device?.cookie) {

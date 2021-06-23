@@ -27,12 +27,9 @@ export default (store: any) => (next: any) => (action: any) => {
      * HACKATHON-NOTES
      * Drop all the accounts belonging to amnesic cookies.
      */
-    let accounts = rawAccounts;
-    if (!process.env.FAKE_AMNESIA) {
-      accounts = accounts.filter(a => {
-        return !knownAmnesiaCookies.includes(a.cookie);
-      });
-    }
+    const accounts = rawAccounts.filter(a => {
+      return !knownAmnesiaCookies.includes(a.cookie);
+    });
 
     setKey("app", "accounts", accounts);
 
