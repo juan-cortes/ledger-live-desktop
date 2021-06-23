@@ -1,6 +1,8 @@
 // @flow
 import React, { useState, useCallback } from "react";
+import { useSelector } from "react-redux";
 import { createAction } from "@ledgerhq/live-common/lib/hw/actions/manager";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 import Dashboard from "~/renderer/screens/manager/Dashboard";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/lib/bridge/react";
 import DeviceAction from "~/renderer/components/DeviceAction";
@@ -38,6 +40,8 @@ const Manager = () => {
   }, []);
   const onResult = useCallback(result => setResult(result), []);
 
+  const device = useSelector(getCurrentDevice)
+
   return (
     <>
       <SyncSkipUnderPriority priority={999} />
@@ -45,22 +49,24 @@ const Manager = () => {
         <Dashboard {...result} onReset={onReset} appsToRestore={appsToRestore} />
       ) : (
         <>
-          <Card horizontal>
-            <Box vertical flex={1} p={26}>
-              <Text ff="Inter|SemiBold" fontSize={6} color="palette.text.shade100" mb={1}>
-                {bannerTitle}
-              </Text>
-              <Text ff="Inter|Medium" fontSize={5} mb={3}>
-                {bannerDescription}
-              </Text>
-              <Box horizontal>
-                <ExternalLinkButton url={bannerUrl} label={buttonText} primary/>
+          {!device ?
+            <Card horizontal>
+              <Box vertical flex={1} p={26}>
+                <Text ff="Inter|SemiBold" fontSize={6} color="palette.text.shade100" mb={1}>
+                  {bannerTitle}
+                </Text>
+                <Text ff="Inter|Medium" fontSize={5} mb={3}>
+                  {bannerDescription}
+                </Text>
+                <Box horizontal>
+                  <ExternalLinkButton url={bannerUrl} label={buttonText} primary/>
+                </Box>
               </Box>
-            </Box>
-            <IllustrationWrapper>
-              <Illustration/>
-            </IllustrationWrapper>
-          </Card>
+              <IllustrationWrapper>
+                <Illustration/>
+              </IllustrationWrapper>
+            </Card>
+          : null }
           <DeviceAction onResult={onResult} action={action} request={null} />
         </>
       )}
