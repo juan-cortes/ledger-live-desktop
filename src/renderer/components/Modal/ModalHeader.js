@@ -52,7 +52,7 @@ const ModalHeaderAction = styled(Tabbable).attrs(() => ({
       ? p.theme.colors.palette.background.paper
       : p.theme.colors.palette.text.shade60};
   top: 0;
-  align-self: ${p => (p.right ? "center" : "flex-start")};
+  align-self: ${p => (p.right ? "center" : "center")};
   line-height: 0;
   ${p =>
     p.onClick

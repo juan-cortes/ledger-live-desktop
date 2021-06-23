@@ -148,7 +148,7 @@ export default function IsUnlocked({ children }: { children: any }) {
   if (isLocked) {
     return (
       <Box sticky alignItems="center" justifyContent="center" id="lockscreen-container">
-        <form onSubmit={handleSubmit} style={{ width: 600 }}>
+        <form onSubmit={handleSubmit} style={{ width: 400 }}>
           <Box alignItems="center">
             <LedgerLiveLogo
               style={{ marginBottom: 40 }}
@@ -213,10 +213,10 @@ export default function IsUnlocked({ children }: { children: any }) {
                         <IconNanoS size={22} />
                         <Text ml={2}>
                           {failed
-                            ? "The connected device is not trusted to unlock Ledger Live"
+                            ? "Couldn’t unlock the app with the connected device"
                             : needsDisconnect
-                            ? "To unlock using the connected device, please reconnect it"
-                            : "Remember you can also connect your Nano S to access Ledger Live"}
+                            ? "Please reconnect your device to unlock the app"
+                            : "You can also connect your Nano S to unlock the app"}
                         </Text>
                       </>
                     ) : (
