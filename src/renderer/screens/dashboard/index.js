@@ -84,7 +84,7 @@ export default function DashboardPage() {
         totalCurrencies={totalCurrencies}
       />
       <Box flow={7} id="portfolio-container">
-        <DeviceDetectionBanner/>
+        <DeviceDetectionBanner />
         {!hasInstalledApps ? (
           <EmptyStateInstalledApps />
         ) : totalAccounts > 0 ? (

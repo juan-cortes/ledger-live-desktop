@@ -60,7 +60,7 @@ export default function AccountsPage() {
       <TopBannerContainer>
         <MigrationBanner />
       </TopBannerContainer>
-      <DeviceDetectionBanner/>
+      <DeviceDetectionBanner bottomMargin />
       <AccountsHeader />
       <AccountList onAccountClick={onAccountClick} accounts={accounts} range={range} mode={mode} />
     </Box>
