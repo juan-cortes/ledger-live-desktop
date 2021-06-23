@@ -235,7 +235,7 @@ const Body = ({
 
   const stepperProps = {
     title: isSelfSend
-      ? "Send to self"
+      ? "Internal transfer"
       : stepId === "warning"
       ? t("common.information")
       : t("send.title"),

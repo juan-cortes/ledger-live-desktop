@@ -51,7 +51,7 @@ export default function AccountContextMenu({
         callback: () => dispatch(openModal("MODAL_SEND", { account, parentAccount })),
       },
       {
-        label: "Send to self",
+        label: "Internal transfer",
         Icon: IconSelfSend,
         callback: () =>
           dispatch(openModal("MODAL_SEND", { isSelfSend: true, account, parentAccount })),
