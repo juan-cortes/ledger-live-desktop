@@ -371,13 +371,13 @@ const DeviceStorage = ({
   };
 
   const toggleAmnesia = useCallback(() => {
-    if (global.localStorage.getItem("amnesiaModeAcked") === "true") {
+    if (isAmnesia) {
       dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: device?.cookie }));
       dispatch(setNameForCookieSeed({ cookieSeed: device?.cookie, name: "" }));
     } else {
       dispatch(openModal("MODAL_AMNESIA"));
     }
-  }, [device, dispatch]);
+  }, [device, dispatch, isAmnesia]);
 
   useEffect(() => {
     if (!editingName) {

@@ -38,7 +38,6 @@ const AmnesiaModal = () => {
   }, [dispatch]);
 
   const onConfirmation = useCallback(() => {
-    global.localStorage.setItem("amnesiaModeAcked", true);
     dispatch(toggleAmnesiaForCookieSeed({ cookieSeed: device?.cookie }));
     dispatch(setNameForCookieSeed({ cookieSeed: device?.cookie, name: "" }));
     onClose();
