@@ -5,6 +5,7 @@ import React, { useEffect } from "react";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { amnesiaCookiesSelector } from "~/renderer/reducers/application";
 import { useSelector } from "react-redux";
+import { useConditionalDebounce } from "~/renderer/hooks/useConditionalDebounce";
 
 import ModalContent from "./ModalContent";
 import ModalHeader from "./ModalHeader";
@@ -44,8 +45,10 @@ const ModalBody = ({
     content.current && content.current.focus();
   }, [content, refocusWhenChange]);
 
-  const device = useSelector(getCurrentDevice);
+  const rawDevice = useSelector(getCurrentDevice);
+  const device = useConditionalDebounce(rawDevice, 4000, key => !key); // NB debounce disconnects in favor of connects
   const amnesiaCookies = useSelector(amnesiaCookiesSelector);
+
   // Hackathon, style hijacking for amnesia + add account
   const visibleModals = useSelector(visibleModalsSelector);
   const isAddAccount = visibleModals.find(vm => vm.name === "MODAL_ADD_ACCOUNTS");

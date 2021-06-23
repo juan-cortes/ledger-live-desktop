@@ -62,7 +62,7 @@ const Container = styled(Tabbable).attrs(() => ({
 
 const Hackathon = ({ collapsed, onClick }: { collapsed: boolean, onClick: () => void }) => {
   const rawDevice = useSelector(getCurrentDevice);
-  const device = useConditionalDebounce(rawDevice, 1200, key => !key); // NB debounce disconnects in favor of connects
+  const device = useConditionalDebounce(rawDevice, 3000, key => !key); // NB debounce disconnects in favor of connects
   const isAmnesia = useIsAmnesia();
 
   const location = useLocation();
@@ -74,7 +74,7 @@ const Hackathon = ({ collapsed, onClick }: { collapsed: boolean, onClick: () => 
       ? cookieSeedNames[device.cookie]
       : "Nano S"
     : "No device detected";
-  const isInManager = location.pathname === "/manager";
+  const isInManager = device && location.pathname === "/manager";
 
   const shade60 = useTheme("colors.palette.text.shade60");
   const white = useTheme("colors.palette.background.paper");
